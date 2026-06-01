@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Detalhe do Cliente
+{% endblock title %}
+
+{% block body %}
+
+<h1>{{ cliente.nome }}</h1>
+
+<p><strong>Email:</strong> {{ cliente.email }}</p>
+<p><strong>CPF:</strong> {{ cliente.cpf }}</p>
+<p><strong>Telefone:</strong> {{ cliente.telefone }}</p>
+<p><strong>Status:</strong> {{ cliente.status }}</p>
+<p><strong>CNH:</strong> {{ cliente.cnh }}</p>
+<p><strong>Categoria CNH:</strong> {{ cliente.categoria_cnh }}</p>
+<p><strong>Validade CNH:</strong> {{ cliente.validade_cnh }}</p>
+<p><strong>Data de cadastro:</strong> {{ cliente.data_cadastro }}</p>
+
+<p>
+    <a href="{% url 'users_web:clientes_editar' cliente.pk %}">Editar</a>
+    |
+    <a href="{% url 'users_web:clientes_excluir' cliente.pk %}">Deletar</a>
+    |
+    <a href="{% url 'users_web:clientes_listar' %}">Voltar para listagem</a>
+</p>
+
+{% endblock body %}
