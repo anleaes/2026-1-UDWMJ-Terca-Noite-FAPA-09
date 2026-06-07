@@ -1,57 +1,27 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Funcionários
-{% endblock title %}
-
+{% block title %}Funcionarios{% endblock %}
 {% block body %}
-
-<h1>Funcionários</h1>
-
-<p>
-    <a href="{% url 'users_web:funcionarios_criar' %}">Cadastrar novo funcionário</a>
-</p>
-
-<table border="1">
-    <thead>
-        <tr>
-            <th>Nome</th>
-            <th>Email</th>
-            <th>CPF</th>
-            <th>Telefone</th>
-            <th>Cargo</th>
-            <th>Nível de acesso</th>
-            <th>Ativo</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        {% for funcionario in funcionarios %}
-            <tr>
-                <td>{{ funcionario.nome }}</td>
-                <td>{{ funcionario.email }}</td>
-                <td>{{ funcionario.cpf }}</td>
-                <td>{{ funcionario.telefone }}</td>
-                <td>{{ funcionario.cargo }}</td>
-                <td>{{ funcionario.nivel_acesso }}</td>
-                <td>{{ funcionario.ativo }}</td>
-                <td>
-                    <a href="{% url 'users_web:funcionarios_detalhe' funcionario.pk %}">Ver</a>
-                    |
-                    <a href="{% url 'users_web:funcionarios_editar' funcionario.pk %}">Editar</a>
-                    |
-                    <a href="{% url 'users_web:funcionarios_deletar' funcionario.pk %}">Deletar</a>
-                    
-                    <a href="{% url 'users_web:funcionarios_criar' %}">Cadastrar novo funcionário</a>
-                </td>
-            </tr>
-        {% empty %}
-            <tr>
-                <td colspan="8">Nenhum funcionário cadastrado.</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-{% endblock body %}
+<div class="ph">
+    <div><div class="ph-title">Funcionarios</div><div class="ph-sub">Equipe cadastrada</div></div>
+    <a href="{% url 'users_web:funcionarios_criar' %}" class="btn btn-primary">Novo funcionario</a>
+</div>
+<div class="tw"><table>
+<thead><tr><th>Nome</th><th>Email</th><th>Cargo</th><th>Nivel de acesso</th><th>Ativo</th><th>Acoes</th></tr></thead>
+<tbody>
+{% for f in funcionarios %}
+<tr>
+    <td><strong>{{ f.nome }}</strong></td>
+    <td>{{ f.email }}</td>
+    <td>{{ f.cargo }}</td>
+    <td>{{ f.nivel_acesso }}</td>
+    <td>{% if f.ativo %}<span class="badge b-green">Ativo</span>{% else %}<span class="badge b-gray">Inativo</span>{% endif %}</td>
+    <td class="td-actions">
+        <a href="{% url 'users_web:funcionarios_detalhe' f.pk %}" class="btn btn-ghost btn-sm">Ver</a>
+        <a href="{% url 'users_web:funcionarios_editar' f.pk %}" class="btn btn-secondary btn-sm">Editar</a>
+        <a href="{% url 'users_web:funcionarios_deletar' f.pk %}" class="btn btn-danger btn-sm">Excluir</a>
+    </td>
+</tr>
+{% empty %}<tr><td colspan="6"><div class="empty"><h3>Nenhum funcionario cadastrado</h3></div></td></tr>
+{% endfor %}
+</tbody></table></div>
+{% endblock %}

@@ -1,23 +1,18 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Detalhe da Peca
-{% endblock title %}
-
+{% block title %}Peca #{{ peca.id }}{% endblock %}
 {% block body %}
-
-<h1>Peca #{{ peca.id }}</h1>
-
-<p><strong>Tipo:</strong> {{ peca.tipo_peca }}</p>
-<p><strong>Fabricante:</strong> {{ peca.fabricante }}</p>
-<p><strong>Preco unitario:</strong> {{ peca.preco_unitario }}</p>
-
-<p>
-    <a href="{% url 'manutencao_web:pecas_editar' peca.pk %}">Editar</a>
-    |
-    <a href="{% url 'manutencao_web:pecas_deletar' peca.pk %}">Deletar</a>
-    |
-    <a href="{% url 'manutencao_web:pecas_lista' %}">Voltar</a>
-</p>
-
-{% endblock body %}
+<div class="detail-wrap">
+<div class="detail-head"><h1>Peca #{{ peca.id }}</h1><p>{{ peca.tipo_peca }}</p></div>
+<div class="detail-body">
+<div class="detail-grid">
+    <div class="detail-field"><label>Tipo</label><span>{{ peca.tipo_peca }}</span></div>
+    <div class="detail-field"><label>Fabricante</label><span>{{ peca.fabricante }}</span></div>
+    <div class="detail-field"><label>Preco unitario</label><span>R$ {{ peca.preco_unitario }}</span></div>
+</div>
+<div class="form-actions">
+    <a href="{% url 'manutencao_web:pecas_editar' peca.pk %}" class="btn btn-secondary">Editar</a>
+    <a href="{% url 'manutencao_web:pecas_deletar' peca.pk %}" class="btn btn-danger">Excluir</a>
+    <a href="{% url 'manutencao_web:pecas_lista' %}" class="btn btn-ghost">Voltar</a>
+</div>
+</div></div>
+{% endblock %}

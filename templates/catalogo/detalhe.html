@@ -1,30 +1,20 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Detalhe do Catálogo
-{% endblock title %}
-
+{% block title %}Catalogo — {{ catalogo.veiculo }}{% endblock %}
 {% block body %}
-
-<h1>Catálogo - {{ catalogo.veiculo }}</h1>
-
-<p><strong>Veículo:</strong> {{ catalogo.veiculo }}</p>
-<p><strong>Preço diária:</strong> R$ {{ catalogo.preco_diaria }}</p>
-<p><strong>Descrição comercial:</strong> {{ catalogo.descricao_comercial }}</p>
-<p><strong>Foto (URL):</strong> {{ catalogo.foto|default:"—" }}</p>
-<p><strong>Destaque:</strong> {{ catalogo.destaque }}</p>
-<p><strong>Ativo:</strong> {{ catalogo.ativo }}</p>
-
-{% if catalogo.foto %}
-    <p><img src="{{ catalogo.foto }}" alt="Foto" style="max-width: 300px;"></p>
-{% endif %}
-
-<p>
-    <a href="{% url 'catalogo_web:editar' catalogo.pk %}">Editar</a>
-    |
-    <a href="{% url 'catalogo_web:deletar' catalogo.pk %}">Deletar</a>
-    |
-    <a href="{% url 'catalogo_web:listar' %}">Voltar para listagem</a>
-</p>
-
-{% endblock body %}
+<div class="detail-wrap">
+<div class="detail-head"><h1>{{ catalogo.veiculo }}</h1><p>Item do catalogo</p></div>
+<div class="detail-body">
+    {% if catalogo.foto %}<img src="{{ catalogo.foto }}" style="max-width:320px;border-radius:6px;margin-bottom:1rem;display:block;">{% endif %}
+    <div class="detail-grid">
+        <div class="detail-field"><label>Preco / diaria</label><span>R$ {{ catalogo.preco_diaria }}</span></div>
+        <div class="detail-field"><label>Destaque</label><span>{% if catalogo.destaque %}<span class="badge b-yellow">Sim</span>{% else %}<span class="badge b-gray">Nao</span>{% endif %}</span></div>
+        <div class="detail-field"><label>Ativo</label><span>{% if catalogo.ativo %}<span class="badge b-green">Ativo</span>{% else %}<span class="badge b-red">Inativo</span>{% endif %}</span></div>
+    </div>
+    {% if catalogo.descricao_comercial %}<p style="color:var(--muted);margin-bottom:1rem;">{{ catalogo.descricao_comercial }}</p>{% endif %}
+    <div class="form-actions">
+        <a href="{% url 'catalogo_web:editar' catalogo.pk %}" class="btn btn-secondary">Editar</a>
+        <a href="{% url 'catalogo_web:deletar' catalogo.pk %}" class="btn btn-danger">Excluir</a>
+        <a href="{% url 'catalogo_web:lista' %}" class="btn btn-ghost">Voltar</a>
+    </div>
+</div></div>
+{% endblock %}

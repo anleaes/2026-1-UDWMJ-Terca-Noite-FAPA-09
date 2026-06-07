@@ -1,51 +1,27 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Locais
-{% endblock title %}
-
+{% block title %}Locais{% endblock %}
 {% block body %}
-
-<h1>Locais de Retirada e Devolução</h1>
-
-<p>
-    <a href="{% url 'locais:criar' %}">Cadastrar local de retirada/devolução</a>
-</p>
-
-<table border="1">
-    <thead>
-        <tr>
-            <th>Nome</th>
-            <th>Endereço</th>
-            <th>Cidade</th>
-            <th>Estado</th>
-            <th>CEP</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        {% for local in locais %}
-            <tr>
-                <td>{{ local.nome }}</td>
-                <td>{{ local.endereco }}</td>
-                <td>{{ local.cidade }}</td>
-                <td>{{ local.estado }}</td>
-                <td>{{ local.cep }}</td>
-                <td>
-                    <a href="{% url 'locais:detalhe' local.pk %}">Ver</a>
-                    |
-                    <a href="{% url 'locais:editar' local.pk %}">Editar</a>
-                    |
-                    <a href="{% url 'locais:deletar' local.pk %}">Deletar</a>
-                </td>
-            </tr>
-        {% empty %}
-            <tr>
-                <td colspan="6">Nenhum local cadastrado.</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-{% endblock body %}
+<div class="ph">
+    <div><div class="ph-title">Locais</div><div class="ph-sub">Pontos de retirada e devolucao</div></div>
+    <a href="{% url 'locais:criar' %}" class="btn btn-primary">Novo local</a>
+</div>
+<div class="tw"><table>
+<thead><tr><th>Nome</th><th>Endereco</th><th>Cidade</th><th>Estado</th><th>CEP</th><th>Acoes</th></tr></thead>
+<tbody>
+{% for l in locais %}
+<tr>
+    <td><strong>{{ l.nome }}</strong></td>
+    <td>{{ l.endereco }}</td>
+    <td>{{ l.cidade }}</td>
+    <td>{{ l.estado }}</td>
+    <td>{{ l.cep }}</td>
+    <td class="td-actions">
+        <a href="{% url 'locais:detalhe' l.pk %}" class="btn btn-ghost btn-sm">Ver</a>
+        <a href="{% url 'locais:editar' l.pk %}" class="btn btn-secondary btn-sm">Editar</a>
+        <a href="{% url 'locais:deletar' l.pk %}" class="btn btn-danger btn-sm">Excluir</a>
+    </td>
+</tr>
+{% empty %}<tr><td colspan="6"><div class="empty"><h3>Nenhum local cadastrado</h3></div></td></tr>
+{% endfor %}
+</tbody></table></div>
+{% endblock %}

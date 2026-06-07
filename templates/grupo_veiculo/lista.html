@@ -1,51 +1,27 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Grupos de Veículos
-{% endblock title %}
-
+{% block title %}Grupos de Veiculos{% endblock %}
 {% block body %}
-
-<h1>Grupos de Veículos</h1>
-
-<p>
-    <a href="{% url 'grupo_veiculo_web:criar' %}">Cadastrar novo grupo</a>
-</p>
-
-<table border="1">
-    <thead>
-        <tr>
-            <th>Nome</th>
-            <th>Descrição</th>
-            <th>Capacidade</th>
-            <th>Valor base diária</th>
-            <th>Ativo</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        {% for grupo in grupos %}
-            <tr>
-                <td>{{ grupo.nome }}</td>
-                <td>{{ grupo.descricao|default:"—" }}</td>
-                <td>{{ grupo.capacidade_passageiros }}</td>
-                <td>R$ {{ grupo.valor_base_diaria }}</td>
-                <td>{{ grupo.ativo }}</td>
-                <td>
-                    <a href="{% url 'grupo_veiculo_web:detalhe' grupo.pk %}">Ver</a>
-                    |
-                    <a href="{% url 'grupo_veiculo_web:editar' grupo.pk %}">Editar</a>
-                    |
-                    <a href="{% url 'grupo_veiculo_web:deletar' grupo.pk %}">Deletar</a>
-                </td>
-            </tr>
-        {% empty %}
-            <tr>
-                <td colspan="6">Nenhum grupo cadastrado.</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-{% endblock body %}
+<div class="ph">
+    <div><div class="ph-title">Grupos de Veiculos</div><div class="ph-sub">Categorias da frota</div></div>
+    <a href="{% url 'grupo_veiculo_web:criar' %}" class="btn btn-primary">Novo grupo</a>
+</div>
+<div class="tw"><table>
+<thead><tr><th>Nome</th><th>Descricao</th><th>Capacidade</th><th>Valor base / diaria</th><th>Ativo</th><th>Acoes</th></tr></thead>
+<tbody>
+{% for g in grupos %}
+<tr>
+    <td><strong>{{ g.nome }}</strong></td>
+    <td>{{ g.descricao|default:"—" }}</td>
+    <td>{{ g.capacidade_passageiros }} pass.</td>
+    <td>R$ {{ g.valor_base_diaria }}</td>
+    <td>{% if g.ativo %}<span class="badge b-green">Ativo</span>{% else %}<span class="badge b-red">Inativo</span>{% endif %}</td>
+    <td class="td-actions">
+        <a href="{% url 'grupo_veiculo_web:detalhe' g.pk %}" class="btn btn-ghost btn-sm">Ver</a>
+        <a href="{% url 'grupo_veiculo_web:editar' g.pk %}" class="btn btn-secondary btn-sm">Editar</a>
+        <a href="{% url 'grupo_veiculo_web:deletar' g.pk %}" class="btn btn-danger btn-sm">Excluir</a>
+    </td>
+</tr>
+{% empty %}<tr><td colspan="6"><div class="empty"><h3>Nenhum grupo cadastrado</h3></div></td></tr>
+{% endfor %}
+</tbody></table></div>
+{% endblock %}

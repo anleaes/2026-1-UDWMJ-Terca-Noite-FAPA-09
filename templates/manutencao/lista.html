@@ -1,62 +1,37 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Manutenções
-{% endblock title %}
-
+{% block title %}Manutencoes{% endblock %}
 {% block body %}
-
-<h1>Manutenções</h1>
-
-<p>
-    <a href="{% url 'manutencao_web:criar' %}">Abrir manutenção</a>
-</p>
-
-<table border="1">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Veiculo</th>
-            <th>Tipo</th>
-            <th>Entrada</th>
-            <th>Saida</th>
-            <th>Custo</th>
-            <th>Status</th>
-            <th>Acoes</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        {% for manutencao in manutencoes %}
-            <tr>
-                <td>{{ manutencao.id }}</td>
-                <td>{{ manutencao.veiculo }}</td>
-                <td>{{ manutencao.tipo_manutencao }}</td>
-                <td>{{ manutencao.data_entrada }}</td>
-                <td>{{ manutencao.data_saida|default:"-" }}</td>
-                <td>{{ manutencao.custo }}</td>
-                <td>{{ manutencao.status }}</td>
-                <td>
-                    <a href="{% url 'manutencao_web:detalhe' manutencao.pk %}">Ver</a>
-                    {% if manutencao.status != 'CONCLUIDA' and manutencao.status != 'CANCELADA' %}
-                        |
-                        <a href="{% url 'manutencao_web:finalizar' manutencao.pk %}">Finalizar</a>
-                        |
-                        <a href="{% url 'manutencao_web:cancelar' manutencao.pk %}">Cancelar</a>
-                    {% else %}
-                        |
-                        <a href="{% url 'manutencao_web:editar' manutencao.pk %}">Editar</a>
-                        |
-                        <a href="{% url 'manutencao_web:deletar' manutencao.pk %}">Deletar</a>
-                    {% endif %}
-                </td>
-            </tr>
-        {% empty %}
-            <tr>
-                <td colspan="8">Nenhuma manutenção aberta.</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-{% endblock body %}
+<div class="ph">
+    <div><div class="ph-title">Manutencoes</div><div class="ph-sub">Ordens de servico da frota</div></div>
+    <a href="{% url 'manutencao_web:criar' %}" class="btn btn-primary">Abrir manutencao</a>
+</div>
+<div class="tw"><table>
+<thead><tr><th>#</th><th>Veiculo</th><th>Tipo</th><th>Entrada</th><th>Saida</th><th>Custo</th><th>Status</th><th>Acoes</th></tr></thead>
+<tbody>
+{% for m in manutencoes %}
+<tr>
+    <td><strong>#{{ m.id }}</strong></td>
+    <td>{{ m.veiculo }}</td>
+    <td>{{ m.tipo_manutencao }}</td>
+    <td>{{ m.data_entrada }}</td>
+    <td>{{ m.data_saida|default:"—" }}</td>
+    <td>{% if m.custo %}R$ {{ m.custo }}{% else %}—{% endif %}</td>
+    <td>{% if m.status == 'ABERTA' or m.status == 'EM_ANDAMENTO' %}<span class="badge b-yellow">{{ m.status }}</span>
+        {% elif m.status == 'CONCLUIDA' %}<span class="badge b-green">Concluida</span>
+        {% elif m.status == 'CANCELADA' %}<span class="badge b-gray">Cancelada</span>
+        {% else %}<span class="badge b-gray">{{ m.status }}</span>{% endif %}</td>
+    <td class="td-actions">
+        <a href="{% url 'manutencao_web:detalhe' m.pk %}" class="btn btn-ghost btn-sm">Ver</a>
+        {% if m.status != 'CONCLUIDA' and m.status != 'CANCELADA' %}
+        <a href="{% url 'manutencao_web:finalizar' m.pk %}" class="btn btn-success btn-sm">Finalizar</a>
+        <a href="{% url 'manutencao_web:cancelar' m.pk %}" class="btn btn-danger btn-sm">Cancelar</a>
+        {% else %}
+        <a href="{% url 'manutencao_web:editar' m.pk %}" class="btn btn-secondary btn-sm">Editar</a>
+        <a href="{% url 'manutencao_web:deletar' m.pk %}" class="btn btn-danger btn-sm">Excluir</a>
+        {% endif %}
+    </td>
+</tr>
+{% empty %}<tr><td colspan="8"><div class="empty"><h3>Nenhuma manutencao aberta</h3></div></td></tr>
+{% endfor %}
+</tbody></table></div>
+{% endblock %}

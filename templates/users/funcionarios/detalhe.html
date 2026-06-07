@@ -1,27 +1,21 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Detalhe do Funcionário
-{% endblock title %}
-
+{% block title %}{{ funcionario.nome }}{% endblock %}
 {% block body %}
-
-<h1>{{ funcionario.nome }}</h1>
-
-<p><strong>Email:</strong> {{ funcionario.email }}</p>
-<p><strong>CPF:</strong> {{ funcionario.cpf }}</p>
-<p><strong>Telefone:</strong> {{ funcionario.telefone }}</p>
-<p><strong>Status:</strong> {{ funcionario.status }}</p>
-<p><strong>Cargo:</strong> {{ funcionario.cargo }}</p>
-<p><strong>Nível de acesso:</strong> {{ funcionario.nivel_acesso }}</p>
-<p><strong>Ativo:</strong> {{ funcionario.ativo }}</p>
-
-<p>
-    <a href="{% url 'users_web:funcionarios_editar' funcionario.pk %}">Editar</a>
-    |
-    <a href="{% url 'users_web:funcionarios_deletar' funcionario.pk %}">Deletar</a>
-    |
-    <a href="{% url 'users_web:funcionarios_listar' %}">Voltar para listagem</a>
-</p>
-
-{% endblock body %}
+<div class="detail-wrap">
+<div class="detail-head"><h1>{{ funcionario.nome }}</h1><p>{{ funcionario.cargo }}</p></div>
+<div class="detail-body">
+<div class="detail-grid">
+    <div class="detail-field"><label>Email</label><span>{{ funcionario.email }}</span></div>
+    <div class="detail-field"><label>CPF</label><span>{{ funcionario.cpf }}</span></div>
+    <div class="detail-field"><label>Telefone</label><span>{{ funcionario.telefone }}</span></div>
+    <div class="detail-field"><label>Cargo</label><span>{{ funcionario.cargo }}</span></div>
+    <div class="detail-field"><label>Nivel de acesso</label><span>{{ funcionario.nivel_acesso }}</span></div>
+    <div class="detail-field"><label>Ativo</label><span>{% if funcionario.ativo %}<span class="badge b-green">Ativo</span>{% else %}<span class="badge b-gray">Inativo</span>{% endif %}</span></div>
+</div>
+<div class="form-actions">
+    <a href="{% url 'users_web:funcionarios_editar' funcionario.pk %}" class="btn btn-secondary">Editar</a>
+    <a href="{% url 'users_web:funcionarios_deletar' funcionario.pk %}" class="btn btn-danger">Excluir</a>
+    <a href="{% url 'users_web:funcionarios_listar' %}" class="btn btn-ghost">Voltar</a>
+</div>
+</div></div>
+{% endblock %}

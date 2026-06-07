@@ -1,49 +1,28 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Catálogo
-{% endblock title %}
-
+{% block title %}Catalogo{% endblock %}
 {% block body %}
-
-<h1>Catálogo</h1>
-
-<p>
-    <a href="{% url 'catalogo_web:criar' %}">Cadastrar novo item do catálogo</a>
-</p>
-
-<table border="1">
-    <thead>
-        <tr>
-            <th>Veículo</th>
-            <th>Preço diária</th>
-            <th>Destaque</th>
-            <th>Ativo</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        {% for catalogo in catalogos %}
-            <tr>
-                <td>{{ catalogo.veiculo }}</td>
-                <td>R$ {{ catalogo.preco_diaria }}</td>
-                <td>{{ catalogo.destaque }}</td>
-                <td>{{ catalogo.ativo }}</td>
-                <td>
-                    <a href="{% url 'catalogo_web:detalhe' catalogo.pk %}">Ver</a>
-                    |
-                    <a href="{% url 'catalogo_web:editar' catalogo.pk %}">Editar</a>
-                    |
-                    <a href="{% url 'catalogo_web:deletar' catalogo.pk %}">Deletar</a>
-                </td>
-            </tr>
-        {% empty %}
-            <tr>
-                <td colspan="5">Nenhum item cadastrado no catálogo.</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-{% endblock body %}
+<div class="ph">
+    <div><div class="ph-title">Catalogo</div><div class="ph-sub">Veiculos exibidos na vitrine</div></div>
+    <a href="{% url 'catalogo_web:criar' %}" class="btn btn-primary">Novo item</a>
+</div>
+<div class="tw">
+<table>
+<thead><tr><th>Veiculo</th><th>Preco / diaria</th><th>Foto</th><th>Destaque</th><th>Ativo</th><th>Acoes</th></tr></thead>
+<tbody>
+{% for c in catalogos %}
+<tr>
+    <td><strong>{{ c.veiculo }}</strong></td>
+    <td>R$ {{ c.preco_diaria }}</td>
+    <td>{% if c.foto %}<img src="{{ c.foto }}" style="height:40px;border-radius:4px;object-fit:cover;">{% else %}<span style="color:var(--muted)">—</span>{% endif %}</td>
+    <td>{% if c.destaque %}<span class="badge b-yellow">Sim</span>{% else %}<span class="badge b-gray">Nao</span>{% endif %}</td>
+    <td>{% if c.ativo %}<span class="badge b-green">Ativo</span>{% else %}<span class="badge b-red">Inativo</span>{% endif %}</td>
+    <td class="td-actions">
+        <a href="{% url 'catalogo_web:detalhe' c.pk %}" class="btn btn-ghost btn-sm">Ver</a>
+        <a href="{% url 'catalogo_web:editar' c.pk %}" class="btn btn-secondary btn-sm">Editar</a>
+        <a href="{% url 'catalogo_web:deletar' c.pk %}" class="btn btn-danger btn-sm">Excluir</a>
+    </td>
+</tr>
+{% empty %}<tr><td colspan="6"><div class="empty"><h3>Nenhum item no catalogo</h3><p>Cadastre veiculos para exibi-los na vitrine.</p></div></td></tr>
+{% endfor %}
+</tbody></table></div>
+{% endblock %}

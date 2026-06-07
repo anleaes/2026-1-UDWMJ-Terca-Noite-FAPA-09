@@ -1,35 +1,32 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Detalhe da Alocação
-{% endblock title %}
-
+{% block title %}Alocacao #{{ alocacao.id }}{% endblock %}
 {% block body %}
-
-<h1>Alocação #{{ alocacao.id }}</h1>
-
-<p><strong>Solicitação:</strong> {{ alocacao.solicitacao }}</p>
-<p><strong>Data início:</strong> {{ alocacao.data_inicio }}</p>
-<p><strong>Data fim prevista:</strong> {{ alocacao.data_fim_prevista }}</p>
-<p><strong>Data fim real:</strong> {{ alocacao.data_fim_real }}</p>
-<p><strong>KM inicial:</strong> {{ alocacao.km_inicial }}</p>
-<p><strong>KM final:</strong> {{ alocacao.km_final }}</p>
-<p><strong>Status:</strong> {{ alocacao.status }}</p>
-<p><strong>Observação:</strong> {{ alocacao.observacao }}</p>
-
-<p>
+<div class="detail-wrap">
+<div class="detail-head"><h1>Alocacao #{{ alocacao.id }}</h1><p>{{ alocacao.solicitacao }}</p></div>
+<div class="detail-body">
+<div class="detail-grid">
+    <div class="detail-field"><label>Solicitacao</label><span>{{ alocacao.solicitacao }}</span></div>
+    <div class="detail-field"><label>Status</label><span>
+        {% if alocacao.status == 'ativa' %}<span class="badge b-green">Ativa</span>
+        {% elif alocacao.status == 'finalizada' %}<span class="badge b-blue">Finalizada</span>
+        {% else %}<span class="badge b-gray">{{ alocacao.status }}</span>{% endif %}
+    </span></div>
+    <div class="detail-field"><label>Data inicio</label><span>{{ alocacao.data_inicio }}</span></div>
+    <div class="detail-field"><label>Data fim prevista</label><span>{{ alocacao.data_fim_prevista }}</span></div>
+    <div class="detail-field"><label>Data fim real</label><span>{{ alocacao.data_fim_real|default:"—" }}</span></div>
+    <div class="detail-field"><label>KM inicial</label><span>{{ alocacao.km_inicial }} km</span></div>
+    <div class="detail-field"><label>KM final</label><span>{{ alocacao.km_final|default:"—" }}</span></div>
+</div>
+{% if alocacao.observacao %}<p style="color:var(--muted);margin-bottom:1rem">{{ alocacao.observacao }}</p>{% endif %}
+<div class="form-actions">
     {% if alocacao.status == 'ativa' %}
-        <a href="{% url 'alocacao_web:finalizar' alocacao.pk %}">Finalizar</a>
-        |
-        <a href="{% url 'alocacao_web:cancelar' alocacao.pk %}">Cancelar</a>
-        |
+    <a href="{% url 'alocacao_web:finalizar' alocacao.pk %}" class="btn btn-success">Finalizar</a>
+    <a href="{% url 'alocacao_web:cancelar' alocacao.pk %}" class="btn btn-danger">Cancelar</a>
     {% else %}
-        <a href="{% url 'alocacao_web:editar' alocacao.pk %}">Editar</a>
-        |
-        <a href="{% url 'alocacao_web:excluir' alocacao.pk %}">Excluir</a>
-        |
+    <a href="{% url 'alocacao_web:editar' alocacao.pk %}" class="btn btn-secondary">Editar</a>
+    <a href="{% url 'alocacao_web:deletar' alocacao.pk %}" class="btn btn-danger">Excluir</a>
     {% endif %}
-    <a href="{% url 'alocacao_web:lista' %}">Voltar</a>
-</p>
-
-{% endblock body %}
+    <a href="{% url 'alocacao_web:lista' %}" class="btn btn-ghost">Voltar</a>
+</div>
+</div></div>
+{% endblock %}

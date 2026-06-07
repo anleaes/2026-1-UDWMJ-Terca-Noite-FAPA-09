@@ -1,27 +1,10 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Finalizar Manutencao
-{% endblock title %}
-
+{% block title %}Finalizar Manutencao #{{ manutencao.id }}{% endblock %}
 {% block body %}
-
-<h1>Finalizar Manutencao #{{ manutencao.id }}</h1>
-
-<p><strong>Veiculo:</strong> {{ manutencao.veiculo }}</p>
-<p><strong>Tipo:</strong> {{ manutencao.tipo_manutencao }}</p>
-<p><strong>Data de entrada:</strong> {{ manutencao.data_entrada }}</p>
-
-<form method="post">
-    {% csrf_token %}
-
-    {{ form.as_p }}
-
-    <button type="submit">Finalizar</button>
-</form>
-
-<p>
-    <a href="{% url 'manutencao_web:detalhe' manutencao.pk %}">Voltar</a>
-</p>
-
-{% endblock body %}
+<div class="ph"><div><div class="ph-title">Finalizar Manutencao #{{ manutencao.id }}</div><div class="ph-sub">{{ manutencao.veiculo }} — {{ manutencao.tipo_manutencao }}</div></div></div>
+<div class="form-wrap"><form method="post">{% csrf_token %}{{ form.as_p }}
+<div class="form-actions">
+    <button type="submit" class="btn btn-success">Confirmar finalizacao</button>
+    <a href="{% url 'manutencao_web:detalhe' manutencao.pk %}" class="btn btn-ghost">Cancelar</a>
+</div></form></div>
+{% endblock %}

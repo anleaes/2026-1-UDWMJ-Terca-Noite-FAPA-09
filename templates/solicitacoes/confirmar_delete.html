@@ -1,19 +1,12 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Excluir Solicitacao
-{% endblock title %}
-
+{% block title %}Excluir Solicitacao{% endblock %}
 {% block body %}
-
-<h1>Excluir Solicitacao</h1>
-
-<p>Tem certeza que deseja excluir a solicitacao #{{ solicitacao.id }}?</p>
-
-<form method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn">Confirmar exclusao</button>
-    <a href="{% url 'solicitacoes:lista' %}" class="btn btn-secondary">Cancelar</a>
-</form>
-
-{% endblock body %}
+<div class="confirm-wrap">
+    <h2>Excluir solicitacao?</h2>
+    <p>Solicitacao <strong>#{{ solicitacao.id }}</strong> de {{ solicitacao.cliente }}. Esta acao nao pode ser desfeita.</p>
+    <form method="post" style="display:flex;gap:8px;">{% csrf_token %}
+        <button type="submit" class="btn btn-danger">Confirmar exclusao</button>
+        <a href="{% url 'solicitacoes:lista' %}" class="btn btn-ghost">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

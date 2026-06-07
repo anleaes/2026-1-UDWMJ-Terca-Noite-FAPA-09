@@ -1,22 +1,12 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Deletar Grupo de Veículo
-{% endblock title %}
-
+{% block title %}Excluir Grupo{% endblock %}
 {% block body %}
-
-<h1>Deletar Grupo de Veículo</h1>
-
-<p>Tem certeza que deseja deletar o grupo "{{ grupo.nome }}"?</p>
-
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Confirmar exclusão</button>
-</form>
-
-<p>
-    <a href="{% url 'grupo_veiculo_web:listar' %}">Cancelar</a>
-</p>
-
-{% endblock body %}
+<div class="confirm-wrap">
+    <h2>Excluir grupo?</h2>
+    <p>Voce esta prestes a excluir o grupo <strong>{{ grupo.nome }}</strong>.</p>
+    <form method="post" style="display:flex;gap:8px;">{% csrf_token %}
+        <button type="submit" class="btn btn-danger">Confirmar exclusao</button>
+        <a href="{% url 'grupo_veiculo_web:lista' %}" class="btn btn-ghost">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

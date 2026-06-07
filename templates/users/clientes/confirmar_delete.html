@@ -1,22 +1,12 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Excluir Cliente
-{% endblock title %}
-
+{% block title %}Excluir Cliente{% endblock %}
 {% block body %}
-
-<h1>Excluir Cliente</h1>
-
-<p>Tem certeza que deseja excluir o cliente "{{ cliente.nome }}"?</p>
-
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Confirmar exclusão</button>
-</form>
-
-<p>
-    <a href="{% url 'users_web:clientes_listar' %}">Voltar para listagem</a>
-</p>
-
-{% endblock body %}
+<div class="confirm-wrap">
+    <h2>Excluir cliente?</h2>
+    <p>Voce esta prestes a excluir <strong>{{ cliente.nome }}</strong>.</p>
+    <form method="post" style="display:flex;gap:8px;">{% csrf_token %}
+        <button type="submit" class="btn btn-danger">Confirmar exclusao</button>
+        <a href="{% url 'users_web:clientes_listar' %}" class="btn btn-ghost">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

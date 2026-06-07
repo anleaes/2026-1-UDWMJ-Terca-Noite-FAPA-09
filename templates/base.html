@@ -4,254 +4,439 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}AppLocação{% endblock title %}</title>
+    <title>{% block title %}AppLocação{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            --navy:    #0f172a;
+            --navy2:   #1e293b;
+            --navy3:   #334155;
+            --blue:    #2563eb;
+            --blue-h:  #1d4ed8;
+            --red:     #dc2626;
+            --red-h:   #b91c1c;
+            --green:   #16a34a;
+            --yellow:  #ca8a04;
+            --surface: #ffffff;
+            --bg:      #f1f5f9;
+            --border:  #e2e8f0;
+            --text:    #0f172a;
+            --muted:   #64748b;
+            --radius:  6px;
+            --shadow:  0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
         }
 
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            background: #f4f4f7;
-            color: #222;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            line-height: 1.5;
         }
 
-        /* HEADER */
         header {
-            background: #1a1a2e;
-            color: #fff;
-            padding: 1.2rem 2rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: var(--navy);
+            height: 52px;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            box-shadow: 0 1px 0 rgba(255,255,255,0.06);
         }
 
-        header .container {
-            max-width: 1200px;
+        .h-inner {
+            max-width: 1400px;
             margin: 0 auto;
+            padding: 0 1.5rem;
+            width: 100%;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
+            gap: 1.5rem;
         }
 
-        header h1 {
-            font-size: 1.6rem;
+        .logo {
+            font-size: 15px;
             font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        header h1 a {
             color: #fff;
             text-decoration: none;
+            letter-spacing: -0.3px;
+            white-space: nowrap;
         }
 
-        header nav {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            align-items: center;
-        }
+        .logo span { color: #93c5fd; }
 
-        header nav a {
-            color: #fff;
+        nav { display: flex; align-items: center; gap: 2px; flex: 1; }
+
+        nav a.nl {
+            color: rgba(255,255,255,0.65);
             text-decoration: none;
-            padding: 0.4rem 0.8rem;
+            padding: 6px 10px;
+            border-radius: var(--radius);
+            font-size: 13px;
             font-weight: 500;
-            border-radius: 4px;
-            transition: background 0.2s;
-            font-size: 0.95rem;
+            transition: color .12s, background .12s;
+            white-space: nowrap;
         }
+        nav a.nl:hover { color: #fff; background: rgba(255,255,255,0.08); }
 
-        header nav a:hover {
-            background: rgba(255,255,255,0.1);
-        }
+        .drop { position: relative; }
 
-        /* Dropdown */
-        .dropdown {
-            position: relative;
-        }
-
-        .dropdown-content {
-            display: none;
+        /* cobre o espaço entre o botão e o menu pra não perder o hover */
+        .drop::after {
+            content: '';
             position: absolute;
-            top: 100%;
+            bottom: -10px;
+            left: 0;
             right: 0;
-            background: #1a1a2e;
-            min-width: 200px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            border-radius: 6px;
-            z-index: 1000;
-            overflow: hidden;
+            height: 10px;
         }
 
-        .dropdown:hover .dropdown-content {
+        .drop-btn {
+            color: rgba(255,255,255,0.65);
+            background: none;
+            border: none;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 6px 10px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: color .12s, background .12s;
+            white-space: nowrap;
+        }
+        .drop-btn:hover, .drop:hover .drop-btn { color: #fff; background: rgba(255,255,255,0.08); }
+        .drop-btn svg { opacity: .6; }
+
+        .drop-menu {
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            background: var(--navy2);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+            min-width: 190px;
+            padding: 4px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+            z-index: 300;
+            transition: opacity .15s, visibility .15s;
+        }
+        .drop:hover .drop-menu {
+            visibility: visible;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .drop-menu a {
             display: block;
+            padding: 7px 10px;
+            color: rgba(255,255,255,0.75);
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 13px;
+            transition: background .1s, color .1s;
         }
+        .drop-menu a:hover { background: rgba(255,255,255,0.07); color: #fff; }
 
-        .dropdown-content a {
-            display: block;
-            padding: 0.7rem 1rem;
-            border-radius: 0;
+        .drop-menu hr { border: none; border-top: 1px solid rgba(255,255,255,0.07); margin: 3px 0; }
+
+        .h-admin {
+            margin-left: auto;
+            background: rgba(220,38,38,.15);
+            color: #fca5a5 !important;
+            border: 1px solid rgba(220,38,38,.3);
+            font-size: 12px !important;
+            padding: 4px 10px !important;
         }
+        .h-admin:hover { background: rgba(220,38,38,.25) !important; }
 
-        .dropdown-content a:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        .dropdown-content hr {
-            border: 0;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            margin: 0.3rem 0;
-        }
-
-        /* MAIN */
         main {
             flex: 1;
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 1.75rem 1.5rem;
             width: 100%;
         }
 
-        /* FOOTER */
-        footer {
-            background: #1a1a2e;
-            color: #aaa;
-            text-align: center;
-            padding: 1.5rem;
-            font-size: 0.9rem;
+        .ph {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
         }
+        .ph-title { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
+        .ph-sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
 
-        /* BUTTONS */
         .btn {
-            display: inline-block;
-            padding: 0.7rem 1.5rem;
-            background: #e94560;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 6px;
-            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 7px 14px;
+            border-radius: var(--radius);
+            font-family: inherit;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
+            text-decoration: none;
+            border: 1px solid transparent;
+            transition: background .12s, border-color .12s, color .12s;
+            white-space: nowrap;
+            line-height: 1;
         }
-
-        .btn:hover {
-            background: #c5354b;
+        .btn-primary   { background: var(--blue);  color: #fff; border-color: var(--blue); }
+        .btn-primary:hover { background: var(--blue-h); border-color: var(--blue-h); }
+        .btn-secondary { background: var(--navy2); color: #fff; border-color: var(--navy2); }
+        .btn-secondary:hover { background: var(--navy3); border-color: var(--navy3); }
+        .btn-danger    { background: var(--red);   color: #fff; border-color: var(--red); }
+        .btn-danger:hover { background: var(--red-h); border-color: var(--red-h); }
+        .btn-success   { background: var(--green); color: #fff; border-color: var(--green); }
+        .btn-success:hover { background: #15803d; }
+        .btn-ghost {
+            background: var(--surface);
+            color: var(--text);
+            border-color: var(--border);
         }
+        .btn-ghost:hover { background: var(--bg); border-color: #cbd5e1; }
+        .btn-sm { padding: 4px 10px; font-size: 12px; }
 
-        .btn-secondary {
-            background: #0f3460;
-        }
-
-        .btn-secondary:hover {
-            background: #0a2444;
-        }
-
-        /* Estilos pra páginas administrativas (lista, form, etc) */
-        h1, h2, h3 {
-            color: #1a1a2e;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #fff;
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
             border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+        .card-body { padding: 1.25rem; }
+
+        .tw {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
             overflow: hidden;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
 
-        table th {
-            background: #1a1a2e;
-            color: #fff;
-            padding: 0.8rem;
-            text-align: left;
-        }
+        table { width: 100%; border-collapse: collapse; }
 
-        table td {
-            padding: 0.8rem;
-            border-top: 1px solid #eee;
-        }
-
-        form input, form select, form textarea {
-            padding: 0.6rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
-            width: 100%;
-            margin-bottom: 1rem;
-        }
-
-        form label {
-            display: block;
-            margin-bottom: 0.3rem;
+        thead th {
+            background: var(--navy);
+            color: rgba(255,255,255,0.8);
+            font-size: 11px;
             font-weight: 600;
+            letter-spacing: .6px;
+            text-transform: uppercase;
+            padding: 10px 12px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        tbody tr { border-top: 1px solid var(--border); }
+        tbody tr:hover { background: #f8fafc; }
+        tbody td { padding: 10px 12px; vertical-align: middle; }
+
+        .td-actions { display: flex; gap: 4px; }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .2px;
+        }
+        .b-green  { background: #dcfce7; color: #15803d; }
+        .b-blue   { background: #dbeafe; color: #1d4ed8; }
+        .b-yellow { background: #fef9c3; color: #854d0e; }
+        .b-red    { background: #fee2e2; color: #b91c1c; }
+        .b-gray   { background: #f1f5f9; color: #475569; }
+
+        .form-wrap {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            max-width: 680px;
+        }
+
+        .form-wrap p { margin-bottom: 14px; }
+
+        .form-wrap label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text);
+        }
+
+        .form-wrap input,
+        .form-wrap select,
+        .form-wrap textarea {
+            width: 100%;
+            padding: 7px 10px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--text);
+            background: var(--surface);
+            transition: border-color .12s, box-shadow .12s;
+        }
+        .form-wrap input:focus,
+        .form-wrap select:focus,
+        .form-wrap textarea:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+        }
+        .form-wrap .helptext { font-size: 12px; color: var(--muted); margin-top: 3px; display: block; }
+        .form-wrap ul.errorlist { list-style: none; color: var(--red); font-size: 12px; margin-top: 3px; }
+
+        .form-actions { display: flex; gap: 8px; margin-top: 20px; align-items: center; }
+
+        .detail-wrap {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        .detail-head {
+            background: var(--navy);
+            padding: 1.25rem 1.5rem;
+        }
+        .detail-head h1 { font-size: 18px; font-weight: 700; color: #fff; }
+        .detail-head p  { font-size: 13px; color: rgba(255,255,255,.5); margin-top: 2px; }
+        .detail-body { padding: 1.5rem; }
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+        .detail-field label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            color: var(--muted);
+            margin-bottom: 3px;
+        }
+        .detail-field span { font-size: 14px; font-weight: 500; color: var(--text); }
+
+        .confirm-wrap {
+            background: var(--surface);
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 2rem;
+            max-width: 460px;
+            box-shadow: var(--shadow);
+        }
+        .confirm-wrap h2 { font-size: 17px; font-weight: 700; color: var(--red); margin-bottom: .5rem; }
+        .confirm-wrap p  { color: var(--muted); font-size: 13px; line-height: 1.6; margin-bottom: 1.25rem; }
+
+        .empty { padding: 3rem 1.5rem; text-align: center; color: var(--muted); }
+        .empty h3 { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+        .empty p  { font-size: 13px; }
+
+        footer {
+            background: var(--navy);
+            color: rgba(255,255,255,.3);
+            text-align: center;
+            padding: 1rem;
+            font-size: 12px;
+            margin-top: auto;
         }
     </style>
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
 
-    <header>
-        <div class="container">
-            <h1><a href="{% url 'core:home' %}">🚗 AppLocação</a></h1>
-            <nav>
-                <a href="{% url 'core:home' %}">Início</a>
+<header>
+    <div class="h-inner">
+        <a href="{% url 'core:home' %}" class="logo">App<span>Locação</span></a>
 
-                <div class="dropdown">
-                    <a href="#">Frota ▾</a>
-                    <div class="dropdown-content">
-                        <a href="{% url 'veiculo_web:lista' %}">Veículos</a>
-                        <a href="{% url 'grupo_veiculo_web:lista' %}">Grupos de Veículos</a>
-                        <a href="{% url 'catalogo_web:lista' %}">Catálogo</a>
-                    </div>
+        <nav>
+            <a href="{% url 'core:home' %}" class="nl">Inicio</a>
+
+            <div class="drop">
+                <button class="drop-btn">Frota
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                        <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </button>
+                <div class="drop-menu">
+                    <a href="{% url 'veiculo_web:lista' %}">Veiculos</a>
+                    <a href="{% url 'grupo_veiculo_web:lista' %}">Grupos de Veiculos</a>
+                    <a href="{% url 'catalogo_web:lista' %}">Catalogo</a>
                 </div>
+            </div>
 
-                <div class="dropdown">
-                    <a href="#">Locação ▾</a>
-                    <div class="dropdown-content">
-                        <a href="{% url 'locais:lista' %}">Locais</a>
-                        <a href="{% url 'solicitacoes:lista' %}">Solicitações</a>
-                        <a href="{% url 'alocacao_web:lista' %}">Alocações</a>
-                        <a href="{% url 'alocacao_web:historicos' %}">Histórico</a>
-                    </div>
+            <div class="drop">
+                <button class="drop-btn">Locacao
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                        <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </button>
+                <div class="drop-menu">
+                    <a href="{% url 'locais:lista' %}">Locais</a>
+                    <a href="{% url 'solicitacoes:lista' %}">Solicitacoes</a>
+                    <hr>
+                    <a href="{% url 'alocacao_web:lista' %}">Alocacoes</a>
+                    <a href="{% url 'alocacao_web:historicos' %}">Historico</a>
                 </div>
+            </div>
 
-                <div class="dropdown">
-                    <a href="#">Manutenção ▾</a>
-                    <div class="dropdown-content">
-                        <a href="{% url 'manutencao_web:lista' %}">Manutenções</a>
-                        <a href="{% url 'manutencao_web:pecas_lista' %}">Peças</a>
-                        <a href="{% url 'manutencao_web:pecas_manutencao_lista' %}">Peças em Manutenção</a>
-                    </div>
+            <div class="drop">
+                <button class="drop-btn">Manutencao
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                        <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </button>
+                <div class="drop-menu">
+                    <a href="{% url 'manutencao_web:lista' %}">Manutencoes</a>
+                    <a href="{% url 'manutencao_web:pecas_lista' %}">Pecas</a>
+                    <a href="{% url 'manutencao_web:pecas_manutencao_lista' %}">Pecas em Manutencao</a>
                 </div>
+            </div>
 
-                <div class="dropdown">
-                    <a href="#">Pessoas ▾</a>
-                    <div class="dropdown-content">
-                        <a href="{% url 'users_web:clientes_listar' %}">Clientes</a>
-                        <a href="{% url 'users_web:funcionarios_lista' %}">Funcionários</a>
-                    </div>
+            <div class="drop">
+                <button class="drop-btn">Pessoas
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                        <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </button>
+                <div class="drop-menu">
+                    <a href="{% url 'users_web:clientes_listar' %}">Clientes</a>
+                    <a href="{% url 'users_web:funcionarios_lista' %}">Funcionarios</a>
                 </div>
+            </div>
 
-                <a href="/admin/">Admin</a>
-            </nav>
-        </div>
-    </header>
+            <a href="/admin/" class="nl h-admin">Admin</a>
+        </nav>
+    </div>
+</header>
 
-    <main>
-        {% block body %}{% endblock body %}
-    </main>
+<main>
+    {% block body %}{% endblock %}
+</main>
 
-    <footer>
-        <p>AppLocação &copy; 2026 — Trabalho UDWMJ</p>
-    </footer>
+<footer>AppLocacao &copy; 2026 — UDWMJ Terca-Noite FAPA</footer>
 
-    <script src="{% static 'js/arquivo_com_javascript.js' %}"></script>
 </body>
 </html>

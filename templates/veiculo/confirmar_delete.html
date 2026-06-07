@@ -1,22 +1,12 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Deletar Veículo
-{% endblock title %}
-
+{% block title %}Excluir Veiculo{% endblock %}
 {% block body %}
-
-<h1>Deletar Veículo</h1>
-
-<p>Tem certeza que deseja deletar o veículo "{{ veiculo.marca }} {{ veiculo.modelo }} - {{ veiculo.placa }}"?</p>
-
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Confirmar exclusão</button>
-</form>
-
-<p>
-    <a href="{% url 'veiculo_web:listar' %}">Cancelar</a>
-</p>
-
-{% endblock body %}
+<div class="confirm-wrap">
+    <h2>Excluir veiculo?</h2>
+    <p>Voce esta prestes a excluir <strong>{{ veiculo.marca }} {{ veiculo.modelo }}</strong> ({{ veiculo.placa }}). Esta acao nao pode ser desfeita.</p>
+    <form method="post" style="display:flex;gap:8px;">{% csrf_token %}
+        <button type="submit" class="btn btn-danger">Confirmar exclusao</button>
+        <a href="{% url 'veiculo_web:lista' %}" class="btn btn-ghost">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

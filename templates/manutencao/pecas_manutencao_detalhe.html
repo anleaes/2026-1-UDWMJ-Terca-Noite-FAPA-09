@@ -1,29 +1,22 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Detalhe da Peca em Manutencao
-{% endblock title %}
-
+{% block title %}Peca em Manutencao #{{ peca_manutencao.id }}{% endblock %}
 {% block body %}
-
-<h1>Peca em Manutencao #{{ peca_manutencao.id }}</h1>
-
-<p><strong>Manutencao:</strong> {{ peca_manutencao.manutencao }}</p>
-<p><strong>Peca:</strong> {{ peca_manutencao.peca }}</p>
-<p><strong>Quantidade:</strong> {{ peca_manutencao.quantidade }}</p>
-<p><strong>Preco unitario:</strong> {{ peca_manutencao.preco_unitario }}</p>
-<p><strong>Subtotal:</strong> {{ peca_manutencao.sub_total }}</p>
-
-<p>
+<div class="detail-wrap">
+<div class="detail-head"><h1>Peca em Manutencao #{{ peca_manutencao.id }}</h1></div>
+<div class="detail-body">
+<div class="detail-grid">
+    <div class="detail-field"><label>Manutencao</label><span>{{ peca_manutencao.manutencao }}</span></div>
+    <div class="detail-field"><label>Peca</label><span>{{ peca_manutencao.peca }}</span></div>
+    <div class="detail-field"><label>Quantidade</label><span>{{ peca_manutencao.quantidade }}</span></div>
+    <div class="detail-field"><label>Preco unitario</label><span>R$ {{ peca_manutencao.preco_unitario }}</span></div>
+    <div class="detail-field"><label>Subtotal</label><span>R$ {{ peca_manutencao.sub_total }}</span></div>
+</div>
+<div class="form-actions">
     {% if peca_manutencao.manutencao.status != 'CONCLUIDA' and peca_manutencao.manutencao.status != 'CANCELADA' %}
-        <a href="{% url 'manutencao_web:pecas_manutencao_editar' peca_manutencao.pk %}">Editar</a>
-        |
-        <a href="{% url 'manutencao_web:pecas_manutencao_deletar' peca_manutencao.pk %}">Deletar</a>
-        |
+    <a href="{% url 'manutencao_web:pecas_manutencao_editar' peca_manutencao.pk %}" class="btn btn-secondary">Editar</a>
+    <a href="{% url 'manutencao_web:pecas_manutencao_deletar' peca_manutencao.pk %}" class="btn btn-danger">Remover</a>
     {% endif %}
-    <a href="{% url 'manutencao_web:detalhe' peca_manutencao.manutencao.pk %}">Voltar para manutencao</a>
-    |
-    <a href="{% url 'manutencao_web:pecas_manutencao_lista' %}">Ver todas</a>
-</p>
-
-{% endblock body %}
+    <a href="{% url 'manutencao_web:detalhe' peca_manutencao.manutencao.pk %}" class="btn btn-ghost">Voltar a manutencao</a>
+</div>
+</div></div>
+{% endblock %}
