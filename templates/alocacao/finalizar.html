@@ -1,26 +1,10 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Finalizar Alocacao
-{% endblock title %}
-
+{% block title %}Finalizar Alocacao #{{ alocacao.id }}{% endblock %}
 {% block body %}
-
-<h1>Finalizar Alocacao #{{ alocacao.id }}</h1>
-
-<p><strong>Solicitacao:</strong> {{ alocacao.solicitacao }}</p>
-<p><strong>KM inicial:</strong> {{ alocacao.km_inicial }}</p>
-
-<form method="post">
-    {% csrf_token %}
-
-    {{ form.as_p }}
-
-    <button type="submit">Finalizar</button>
-</form>
-
-<p>
-    <a href="{% url 'alocacao_web:detalhe' alocacao.pk %}">Voltar</a>
-</p>
-
-{% endblock body %}
+<div class="ph"><div><div class="ph-title">Finalizar Alocacao #{{ alocacao.id }}</div><div class="ph-sub">{{ alocacao.solicitacao }} — KM inicial: {{ alocacao.km_inicial }}</div></div></div>
+<div class="form-wrap"><form method="post">{% csrf_token %}{{ form.as_p }}
+<div class="form-actions">
+    <button type="submit" class="btn btn-success">Confirmar finalizacao</button>
+    <a href="{% url 'alocacao_web:detalhe' alocacao.pk %}" class="btn btn-ghost">Cancelar</a>
+</div></form></div>
+{% endblock %}

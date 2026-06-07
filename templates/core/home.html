@@ -1,187 +1,45 @@
 {% extends 'base.html' %}
-
-{% block title %}AppLocação - Aluguel de Veículos{% endblock title %}
-
-{% block body %}
+{% block title %}Catalogo — AppLocacao{% endblock %}
+{% block extra_css %}
 <style>
-    /* HERO */
-    .hero {
-        background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
-        color: #fff;
-        padding: 4rem 2rem;
-        border-radius: 12px;
-        text-align: center;
-        margin-bottom: 3rem;
-    }
-
-    .hero h2 {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-        color: #fff;
-    }
-
-    .hero p {
-        font-size: 1.2rem;
-        opacity: 0.9;
-        max-width: 600px;
-        margin: 0 auto;
-    }
-
-    /* SEÇÃO CATÁLOGO */
-    .section-title {
-        font-size: 1.8rem;
-        margin-bottom: 1.5rem;
-        color: #1a1a2e;
-    }
-
-    /* GRID DE CARDS */
-    .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 1.5rem;
-    }
-
-    .card {
-        background: #fff;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-        transition: transform 0.2s, box-shadow 0.2s;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-    }
-
-    .card-img {
-        width: 100%;
-        height: 200px;
-        background: #ddd;
-        background-size: cover;
-        background-position: center;
-        position: relative;
-    }
-
-    .card-img.placeholder {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 3rem;
-        color: #999;
-    }
-
-    .badge {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: #e94560;
-        color: #fff;
-        padding: 0.3rem 0.7rem;
-        border-radius: 4px;
-        font-size: 0.8rem;
-        font-weight: 600;
-    }
-
-    .card-body {
-        padding: 1.2rem;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .card-grupo {
-        font-size: 0.85rem;
-        color: #666;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 0.3rem;
-    }
-
-    .card-titulo {
-        font-size: 1.2rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-        color: #1a1a2e;
-    }
-
-    .card-info {
-        font-size: 0.9rem;
-        color: #555;
-        margin-bottom: 0.5rem;
-    }
-
-    .card-preco {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #e94560;
-        margin: 0.8rem 0;
-    }
-
-    .card-preco small {
-        font-size: 0.8rem;
-        color: #888;
-        font-weight: 400;
-    }
-
-    .card-btn {
-        margin-top: auto;
-        text-align: center;
-    }
-
-    /* VAZIO */
-    .empty {
-        text-align: center;
-        padding: 3rem;
-        color: #666;
-        background: #fff;
-        border-radius: 12px;
-    }
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1rem; }
+.car-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; box-shadow:var(--shadow); overflow:hidden; display:flex; flex-direction:column; }
+.car-img { width:100%; height:170px; object-fit:cover; background:#e2e8f0; display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--muted); }
+.car-img img { width:100%; height:100%; object-fit:cover; }
+.car-body { padding:1rem; flex:1; display:flex; flex-direction:column; }
+.car-group { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); margin-bottom:3px; }
+.car-name { font-size:15px; font-weight:700; margin-bottom:4px; }
+.car-meta { font-size:12px; color:var(--muted); margin-bottom:8px; }
+.car-price { font-size:18px; font-weight:700; color:var(--blue); margin-top:auto; padding-top:8px; border-top:1px solid var(--border); }
+.car-price small { font-size:12px; color:var(--muted); font-weight:400; }
+.car-footer { display:flex; gap:6px; margin-top:10px; }
 </style>
-
-<section class="hero">
-    <h2>Encontre o carro ideal pra você</h2>
-    <p>Aluguel rápido, fácil e seguro. Escolha entre nossa frota e reserve agora mesmo.</p>
-</section>
-
-<h2 class="section-title">Veículos disponíveis</h2>
-
+{% endblock %}
+{% block body %}
+<div class="ph">
+    <div><div class="ph-title">Catalogo de Veiculos</div><div class="ph-sub">{{ catalogos|length }} veiculo{{ catalogos|length|pluralize:",s" }} no catalogo</div></div>
+    <a href="{% url 'catalogo_web:lista' %}" class="btn btn-ghost">Gerenciar catalogo</a>
+</div>
 <div class="grid">
-    {% for catalogo in catalogos %}
-    <div class="card">
-        {% if catalogo.foto %}
-            <div class="card-img" style="background-image: url('{{ catalogo.foto }}');">
-                {% if catalogo.destaque %}<span class="badge">⭐ Destaque</span>{% endif %}
-            </div>
-        {% else %}
-            <div class="card-img placeholder">
-                🚗
-                {% if catalogo.destaque %}<span class="badge">⭐ Destaque</span>{% endif %}
-            </div>
-        {% endif %}
-
-        <div class="card-body">
-            <div class="card-grupo">{{ catalogo.veiculo.grupo.nome }}</div>
-            <div class="card-titulo">{{ catalogo.veiculo.marca }} {{ catalogo.veiculo.modelo }}</div>
-            <div class="card-info">{{ catalogo.veiculo.ano_modelo }} • {{ catalogo.veiculo.cor }} • {{ catalogo.veiculo.get_tipo_combustivel_display }}</div>
-            
-            <div class="card-preco">
-                R$ {{ catalogo.preco_diaria }}
-                <small>/ diária</small>
-            </div>
-
-            <div class="card-btn">
-                <a href="{% url 'core:veiculo_detalhe' catalogo.pk %}" class="btn">Ver detalhes</a>
-            </div>
+{% for c in catalogos %}
+<div class="car-card">
+    <div class="car-img">
+        {% if c.foto %}<img src="{{ c.foto }}" alt="{{ c.veiculo.modelo }}" onerror="this.parentElement.innerHTML='Sem imagem'">
+        {% else %}Sem imagem{% endif %}
+    </div>
+    <div class="car-body">
+        <div class="car-group">{{ c.veiculo.grupo.nome }}</div>
+        <div class="car-name">{{ c.veiculo.marca }} {{ c.veiculo.modelo }}</div>
+        <div class="car-meta">{{ c.veiculo.ano_modelo }} &middot; {{ c.veiculo.cor }} &middot; {{ c.veiculo.get_tipo_combustivel_display }}</div>
+        <div class="car-price">R$ {{ c.preco_diaria }} <small>/ diaria</small></div>
+        <div class="car-footer">
+            <a href="{% url 'core:veiculo_detalhe' c.pk %}" class="btn btn-ghost btn-sm" style="flex:1;justify-content:center">Ver detalhes</a>
+            {% if c.destaque %}<span class="badge b-yellow">Destaque</span>{% endif %}
         </div>
     </div>
-    {% empty %}
-    <div class="empty">
-        <h3>Nenhum veículo disponível no momento</h3>
-        <p>Volte mais tarde 🚗</p>
-    </div>
-    {% endfor %}
 </div>
-{% endblock body %}
+{% empty %}
+<div class="card" style="grid-column:1/-1"><div class="card-body"><div class="empty"><h3>Nenhum veiculo no catalogo</h3><p>Cadastre veiculos e adicione-os ao catalogo.</p></div></div></div>
+{% endfor %}
+</div>
+{% endblock %}

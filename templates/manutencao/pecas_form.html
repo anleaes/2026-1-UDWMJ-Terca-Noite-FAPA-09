@@ -1,23 +1,10 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Formulário de Peça
-{% endblock title %}
-
+{% block title %}{% if form.instance.pk %}Editar{% else %}Nova{% endif %} Peca{% endblock %}
 {% block body %}
-
-<h1>Cadastrar Peça de Manutenção</h1>
-
-<form method="post">
-    {% csrf_token %}
-
-    {{ form.as_p }}
-
-    <button type="submit">Salvar</button>
-</form>
-
-<p>
-    <a href="{% url 'manutencao_web:pecas_lista' %}">Voltar</a>
-</p>
-
-{% endblock body %}
+<div class="ph"><div><div class="ph-title">{% if form.instance.pk %}Editar Peca{% else %}Nova Peca{% endif %}</div></div></div>
+<div class="form-wrap"><form method="post">{% csrf_token %}{{ form.as_p }}
+<div class="form-actions">
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    <a href="{% url 'manutencao_web:pecas_lista' %}" class="btn btn-ghost">Cancelar</a>
+</div></form></div>
+{% endblock %}

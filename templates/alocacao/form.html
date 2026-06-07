@@ -1,23 +1,10 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Gerar Alocação
-{% endblock title %}
-
+{% block title %}Gerar Alocacao{% endblock %}
 {% block body %}
-
-<h1>Gerar Alocação a partir de Solicitação Aprovada</h1>
-
-<form method="post">
-    {% csrf_token %}
-
-    {{ form.as_p }}
-
-    <button type="submit">Salvar</button>
-</form>
-
-<p>
-    <a href="{% url 'alocacao_web:lista' %}">Voltar</a>
-</p>
-
-{% endblock body %}
+<div class="ph"><div><div class="ph-title">Gerar Alocacao</div><div class="ph-sub">A partir de solicitacao aprovada</div></div></div>
+<div class="form-wrap"><form method="post">{% csrf_token %}{{ form.as_p }}
+<div class="form-actions">
+    <button type="submit" class="btn btn-primary">Gerar</button>
+    <a href="{% url 'alocacao_web:lista' %}" class="btn btn-ghost">Cancelar</a>
+</div></form></div>
+{% endblock %}

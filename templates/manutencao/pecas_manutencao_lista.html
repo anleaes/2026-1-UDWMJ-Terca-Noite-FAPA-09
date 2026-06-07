@@ -1,57 +1,26 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Peças em Manutenção
-{% endblock title %}
-
+{% block title %}Pecas em Manutencao{% endblock %}
 {% block body %}
-
-<h1>Peças em Manutenção</h1>
-
-<p>
-    <a href="{% url 'manutencao_web:pecas_manutencao_criar' %}">Adicionar peça usada na manutenção</a>
-    |
-    <a href="{% url 'manutencao_web:pecas_lista' %}">Ver peças cadastradas</a>
-</p>
-
-<table border="1">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Manutencao</th>
-            <th>Peca</th>
-            <th>Quantidade</th>
-            <th>Preco unitario</th>
-            <th>Subtotal</th>
-            <th>Acoes</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        {% for item in pecas_manutencao %}
-            <tr>
-                <td>{{ item.id }}</td>
-                <td>{{ item.manutencao }}</td>
-                <td>{{ item.peca }}</td>
-                <td>{{ item.quantidade }}</td>
-                <td>{{ item.preco_unitario }}</td>
-                <td>{{ item.sub_total }}</td>
-                <td>
-                    <a href="{% url 'manutencao_web:pecas_manutencao_detalhe' item.pk %}">Ver</a>
-                    {% if item.manutencao.status != 'CONCLUIDA' and item.manutencao.status != 'CANCELADA' %}
-                        |
-                        <a href="{% url 'manutencao_web:pecas_manutencao_editar' item.pk %}">Editar</a>
-                        |
-                        <a href="{% url 'manutencao_web:pecas_manutencao_deletar' item.pk %}">Deletar</a>
-                    {% endif %}
-                </td>
-            </tr>
-        {% empty %}
-            <tr>
-                <td colspan="7">Nenhuma peça vinculada a uma manutenção.</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-{% endblock body %}
+<div class="ph">
+    <div><div class="ph-title">Pecas em Manutencao</div></div>
+    <a href="{% url 'manutencao_web:pecas_manutencao_criar' %}" class="btn btn-primary">Adicionar</a>
+</div>
+<div class="tw"><table>
+<thead><tr><th>#</th><th>Manutencao</th><th>Peca</th><th>Qtd</th><th>Preco unit.</th><th>Subtotal</th><th>Acoes</th></tr></thead>
+<tbody>
+{% for i in pecas_manutencao %}
+<tr>
+    <td>#{{ i.id }}</td><td>{{ i.manutencao }}</td><td>{{ i.peca }}</td>
+    <td>{{ i.quantidade }}</td><td>R$ {{ i.preco_unitario }}</td><td>R$ {{ i.sub_total }}</td>
+    <td class="td-actions">
+        <a href="{% url 'manutencao_web:pecas_manutencao_detalhe' i.pk %}" class="btn btn-ghost btn-sm">Ver</a>
+        {% if i.manutencao.status != 'CONCLUIDA' and i.manutencao.status != 'CANCELADA' %}
+        <a href="{% url 'manutencao_web:pecas_manutencao_editar' i.pk %}" class="btn btn-secondary btn-sm">Editar</a>
+        <a href="{% url 'manutencao_web:pecas_manutencao_deletar' i.pk %}" class="btn btn-danger btn-sm">Remover</a>
+        {% endif %}
+    </td>
+</tr>
+{% empty %}<tr><td colspan="7"><div class="empty"><h3>Nenhuma peca vinculada</h3></div></td></tr>
+{% endfor %}
+</tbody></table></div>
+{% endblock %}

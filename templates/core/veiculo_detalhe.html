@@ -1,167 +1,34 @@
 {% extends 'base.html' %}
-
-{% block title %}{{ catalogo.veiculo.marca }} {{ catalogo.veiculo.modelo }}{% endblock title %}
-
+{% block title %}{{ catalogo.veiculo.marca }} {{ catalogo.veiculo.modelo }}{% endblock %}
 {% block body %}
-<style>
-    .detalhe {
-        background: #fff;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0;
-    }
-
-    @media (max-width: 768px) {
-        .detalhe { grid-template-columns: 1fr; }
-    }
-
-    .detalhe-img {
-        background: #ddd;
-        background-size: cover;
-        background-position: center;
-        min-height: 400px;
-    }
-
-    .detalhe-img.placeholder {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 6rem;
-        color: #999;
-    }
-
-    .detalhe-body {
-        padding: 2.5rem;
-    }
-
-    .grupo-tag {
-        display: inline-block;
-        background: #f0f0f5;
-        color: #555;
-        padding: 0.3rem 0.8rem;
-        border-radius: 4px;
-        font-size: 0.85rem;
-        margin-bottom: 1rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .detalhe-titulo {
-        font-size: 2.2rem;
-        margin-bottom: 0.5rem;
-        color: #1a1a2e;
-    }
-
-    .detalhe-subtitulo {
-        color: #666;
-        margin-bottom: 1.5rem;
-        font-size: 1.1rem;
-    }
-
-    .detalhe-preco {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: #e94560;
-        margin: 1.5rem 0;
-    }
-
-    .detalhe-preco small {
-        font-size: 1rem;
-        color: #888;
-        font-weight: 400;
-    }
-
-    .specs {
-        background: #f8f8fb;
-        border-radius: 8px;
-        padding: 1.2rem;
-        margin: 1.5rem 0;
-    }
-
-    .specs h3 {
-        margin-bottom: 1rem;
-        color: #1a1a2e;
-        font-size: 1.1rem;
-    }
-
-    .spec-item {
-        display: flex;
-        justify-content: space-between;
-        padding: 0.5rem 0;
-        border-bottom: 1px solid #eee;
-    }
-
-    .spec-item:last-child { border-bottom: none; }
-
-    .spec-label { color: #666; }
-    .spec-value { font-weight: 600; color: #222; }
-
-    .descricao {
-        color: #555;
-        line-height: 1.6;
-        margin: 1.5rem 0;
-    }
-
-    .voltar {
-        margin-top: 1rem;
-        display: inline-block;
-        color: #666;
-        text-decoration: none;
-    }
-
-    .voltar:hover { color: #1a1a2e; }
-</style>
-
-<a href="{% url 'core:home' %}" class="voltar">← Voltar para o catálogo</a>
-
-<div class="detalhe" style="margin-top: 1rem;">
-    {% if catalogo.foto %}
-        <div class="detalhe-img" style="background-image: url('{{ catalogo.foto }}');"></div>
-    {% else %}
-        <div class="detalhe-img placeholder">🚗</div>
-    {% endif %}
-
-    <div class="detalhe-body">
-        <span class="grupo-tag">{{ catalogo.veiculo.grupo.nome }}</span>
-        <h1 class="detalhe-titulo">{{ catalogo.veiculo.marca }} {{ catalogo.veiculo.modelo }}</h1>
-        <p class="detalhe-subtitulo">Ano {{ catalogo.veiculo.ano_modelo }} • {{ catalogo.veiculo.cor }}</p>
-
-        <div class="detalhe-preco">
-            R$ {{ catalogo.preco_diaria }}
-            <small>/ diária</small>
+<a href="{% url 'core:home' %}" style="color:var(--muted);text-decoration:none;font-size:13px;display:inline-block;margin-bottom:1rem">&larr; Voltar ao catalogo</a>
+<div class="detail-wrap">
+<div class="detail-head">
+    <h1>{{ catalogo.veiculo.marca }} {{ catalogo.veiculo.modelo }}</h1>
+    <p>{{ catalogo.veiculo.grupo.nome }} &mdash; R$ {{ catalogo.preco_diaria }} / diaria</p>
+</div>
+<div class="detail-body" style="display:grid;grid-template-columns:300px 1fr;gap:1.5rem">
+    <div>
+        {% if catalogo.foto %}
+        <img src="{{ catalogo.foto }}" alt="{{ catalogo.veiculo.modelo }}"
+             style="width:100%;border-radius:6px;display:block"
+             onerror="this.style.display='none'">
+        {% else %}
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;height:200px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px">Sem imagem</div>
+        {% endif %}
+    </div>
+    <div>
+        <div class="detail-grid">
+            <div class="detail-field"><label>Placa</label><span>{{ catalogo.veiculo.placa }}</span></div>
+            <div class="detail-field"><label>Combustivel</label><span>{{ catalogo.veiculo.get_tipo_combustivel_display }}</span></div>
+            <div class="detail-field"><label>Capacidade</label><span>{{ catalogo.veiculo.grupo.capacidade_passageiros }} passageiros</span></div>
+            <div class="detail-field"><label>Quilometragem</label><span>{{ catalogo.veiculo.quilometragem }} km</span></div>
+            <div class="detail-field"><label>Ano fabricacao</label><span>{{ catalogo.veiculo.ano_fabricacao }}</span></div>
+            <div class="detail-field"><label>Ano modelo</label><span>{{ catalogo.veiculo.ano_modelo }}</span></div>
         </div>
-
-        <p class="descricao">{{ catalogo.descricao_comercial }}</p>
-
-        <div class="specs">
-            <h3>Especificações</h3>
-            <div class="spec-item">
-                <span class="spec-label">Placa</span>
-                <span class="spec-value">{{ catalogo.veiculo.placa }}</span>
-            </div>
-            <div class="spec-item">
-                <span class="spec-label">Combustível</span>
-                <span class="spec-value">{{ catalogo.veiculo.get_tipo_combustivel_display }}</span>
-            </div>
-            <div class="spec-item">
-                <span class="spec-label">Capacidade</span>
-                <span class="spec-value">{{ catalogo.veiculo.grupo.capacidade_passageiros }} passageiros</span>
-            </div>
-            <div class="spec-item">
-                <span class="spec-label">Quilometragem</span>
-                <span class="spec-value">{{ catalogo.veiculo.quilometragem }} km</span>
-            </div>
-            <div class="spec-item">
-                <span class="spec-label">Ano de fabricação</span>
-                <span class="spec-value">{{ catalogo.veiculo.ano_fabricacao }}</span>
-            </div>
-        </div>
-
-        <a href="{% url 'alocacao_web:criar' %}" class="btn">Alugar agora</a>
-        <a href="{% url 'core:home' %}" class="btn btn-secondary">Voltar</a>
+        {% if catalogo.descricao_comercial %}<p style="color:var(--muted);font-size:13px;margin-bottom:1rem">{{ catalogo.descricao_comercial }}</p>{% endif %}
+        <a href="{% url 'solicitacoes:criar' %}" class="btn btn-primary">Solicitar aluguel</a>
     </div>
 </div>
-{% endblock body %}
+</div>
+{% endblock %}

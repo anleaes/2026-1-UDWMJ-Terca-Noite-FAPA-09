@@ -1,51 +1,26 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Peças
-{% endblock title %}
-
+{% block title %}Pecas{% endblock %}
 {% block body %}
-
-<h1>Peças</h1>
-
-<p>
-    <a href="{% url 'manutencao_web:pecas_criar' %}">Cadastrar peça</a>
-    |
-    <a href="{% url 'manutencao_web:pecas_manutencao_lista' %}">Peças usadas em manutenção</a>
-</p>
-
-<table border="1">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Tipo</th>
-            <th>Fabricante</th>
-            <th>Preço unitário</th>
-            <th>Acoes</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        {% for peca in pecas %}
-            <tr>
-                <td>{{ peca.id }}</td>
-                <td>{{ peca.tipo_peca }}</td>
-                <td>{{ peca.fabricante }}</td>
-                <td>{{ peca.preco_unitario }}</td>
-                <td>
-                    <a href="{% url 'manutencao_web:pecas_detalhe' peca.pk %}">Ver</a>
-                    |
-                    <a href="{% url 'manutencao_web:pecas_editar' peca.pk %}">Editar</a>
-                    |
-                    <a href="{% url 'manutencao_web:pecas_deletar' peca.pk %}">Deletar</a>
-                </td>
-            </tr>
-        {% empty %}
-            <tr>
-                <td colspan="5">Nenhuma peça cadastrada.</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-{% endblock body %}
+<div class="ph">
+    <div><div class="ph-title">Pecas</div><div class="ph-sub">Estoque de pecas</div></div>
+    <div style="display:flex;gap:8px">
+        <a href="{% url 'manutencao_web:pecas_manutencao_lista' %}" class="btn btn-ghost">Pecas em manutencao</a>
+        <a href="{% url 'manutencao_web:pecas_criar' %}" class="btn btn-primary">Nova peca</a>
+    </div>
+</div>
+<div class="tw"><table>
+<thead><tr><th>#</th><th>Tipo</th><th>Fabricante</th><th>Preco unitario</th><th>Acoes</th></tr></thead>
+<tbody>
+{% for p in pecas %}
+<tr>
+    <td>#{{ p.id }}</td><td>{{ p.tipo_peca }}</td><td>{{ p.fabricante }}</td><td>R$ {{ p.preco_unitario }}</td>
+    <td class="td-actions">
+        <a href="{% url 'manutencao_web:pecas_detalhe' p.pk %}" class="btn btn-ghost btn-sm">Ver</a>
+        <a href="{% url 'manutencao_web:pecas_editar' p.pk %}" class="btn btn-secondary btn-sm">Editar</a>
+        <a href="{% url 'manutencao_web:pecas_deletar' p.pk %}" class="btn btn-danger btn-sm">Excluir</a>
+    </td>
+</tr>
+{% empty %}<tr><td colspan="5"><div class="empty"><h3>Nenhuma peca cadastrada</h3></div></td></tr>
+{% endfor %}
+</tbody></table></div>
+{% endblock %}

@@ -1,31 +1,30 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Detalhe do Veículo
-{% endblock title %}
-
+{% block title %}{{ veiculo.marca }} {{ veiculo.modelo }}{% endblock %}
 {% block body %}
-
-<h1>{{ veiculo.marca }} {{ veiculo.modelo }}</h1>
-
-<p><strong>Placa:</strong> {{ veiculo.placa }}</p>
-<p><strong>RENAVAM:</strong> {{ veiculo.renavam }}</p>
-<p><strong>Marca:</strong> {{ veiculo.marca }}</p>
-<p><strong>Modelo:</strong> {{ veiculo.modelo }}</p>
-<p><strong>Ano de fabricação:</strong> {{ veiculo.ano_fabricacao }}</p>
-<p><strong>Ano modelo:</strong> {{ veiculo.ano_modelo }}</p>
-<p><strong>Cor:</strong> {{ veiculo.cor }}</p>
-<p><strong>Quilometragem:</strong> {{ veiculo.quilometragem }} km</p>
-<p><strong>Grupo:</strong> {{ veiculo.grupo.nome }}</p>
-<p><strong>Combustível:</strong> {{ veiculo.get_tipo_combustivel_display }}</p>
-<p><strong>Status:</strong> {{ veiculo.get_status_display }}</p>
-
-<p>
-    <a href="{% url 'veiculo_web:editar' veiculo.pk %}">Editar</a>
-    |
-    <a href="{% url 'veiculo_web:deletar' veiculo.pk %}">Deletar</a>
-    |
-    <a href="{% url 'veiculo_web:listar' %}">Voltar para listagem</a>
-</p>
-
-{% endblock body %}
+<div class="detail-wrap">
+<div class="detail-head"><h1>{{ veiculo.marca }} {{ veiculo.modelo }}</h1><p>{{ veiculo.placa }} — {{ veiculo.grupo.nome }}</p></div>
+<div class="detail-body">
+<div class="detail-grid">
+    <div class="detail-field"><label>Placa</label><span>{{ veiculo.placa }}</span></div>
+    <div class="detail-field"><label>RENAVAM</label><span>{{ veiculo.renavam }}</span></div>
+    <div class="detail-field"><label>Marca</label><span>{{ veiculo.marca }}</span></div>
+    <div class="detail-field"><label>Modelo</label><span>{{ veiculo.modelo }}</span></div>
+    <div class="detail-field"><label>Ano fabricacao</label><span>{{ veiculo.ano_fabricacao }}</span></div>
+    <div class="detail-field"><label>Ano modelo</label><span>{{ veiculo.ano_modelo }}</span></div>
+    <div class="detail-field"><label>Cor</label><span>{{ veiculo.cor }}</span></div>
+    <div class="detail-field"><label>Quilometragem</label><span>{{ veiculo.quilometragem }} km</span></div>
+    <div class="detail-field"><label>Combustivel</label><span>{{ veiculo.get_tipo_combustivel_display }}</span></div>
+    <div class="detail-field"><label>Status</label><span>
+        {% if veiculo.status == 'disponivel' %}<span class="badge b-green">Disponivel</span>
+        {% elif veiculo.status == 'alocado' %}<span class="badge b-blue">Alocado</span>
+        {% elif veiculo.status == 'manutencao' %}<span class="badge b-yellow">Manutencao</span>
+        {% else %}<span class="badge b-gray">{{ veiculo.get_status_display }}</span>{% endif %}
+    </span></div>
+</div>
+<div class="form-actions">
+    <a href="{% url 'veiculo_web:editar' veiculo.pk %}" class="btn btn-secondary">Editar</a>
+    <a href="{% url 'veiculo_web:deletar' veiculo.pk %}" class="btn btn-danger">Excluir</a>
+    <a href="{% url 'veiculo_web:lista' %}" class="btn btn-ghost">Voltar</a>
+</div>
+</div></div>
+{% endblock %}

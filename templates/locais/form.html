@@ -1,23 +1,10 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Formulário de Local
-{% endblock title %}
-
+{% block title %}{% if form.instance.pk %}Editar{% else %}Novo{% endif %} Local{% endblock %}
 {% block body %}
-
-<h1>Formulário de Local</h1>
-
-<form method="post">
-    {% csrf_token %}
-
-    {{ form.as_p }}
-
-    <button type="submit">Salvar</button>
-</form>
-
-<p>
-    <a href="{% url 'locais:listar' %}">Voltar para listagem</a>
-</p>
-
-{% endblock body %}
+<div class="ph"><div><div class="ph-title">{% if form.instance.pk %}Editar Local{% else %}Novo Local{% endif %}</div></div></div>
+<div class="form-wrap"><form method="post">{% csrf_token %}{{ form.as_p }}
+<div class="form-actions">
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    <a href="{% url 'locais:lista' %}" class="btn btn-ghost">Cancelar</a>
+</div></form></div>
+{% endblock %}

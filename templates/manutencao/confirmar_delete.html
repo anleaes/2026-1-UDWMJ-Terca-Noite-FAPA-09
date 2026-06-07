@@ -1,26 +1,15 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Excluir Manutencao
-{% endblock title %}
-
+{% block title %}Excluir Manutencao{% endblock %}
 {% block body %}
-
-<h1>Excluir Manutencao</h1>
-
-{% if erro %}
-    <p>{{ erro }}</p>
-{% else %}
-    <p>Tem certeza que deseja excluir a manutencao #{{ manutencao.id }}?</p>
-
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit">Confirmar exclusao</button>
+<div class="confirm-wrap">
+    <h2>Excluir manutencao?</h2>
+    {% if erro %}<p style="color:var(--red)">{{ erro }}</p>
+    {% else %}
+    <p>Voce esta prestes a excluir a <strong>Manutencao #{{ manutencao.id }}</strong>.</p>
+    <form method="post" style="display:flex;gap:8px;">{% csrf_token %}
+        <button type="submit" class="btn btn-danger">Confirmar exclusao</button>
+        <a href="{% url 'manutencao_web:lista' %}" class="btn btn-ghost">Cancelar</a>
     </form>
-{% endif %}
-
-<p>
-    <a href="{% url 'manutencao_web:lista' %}">Cancelar</a>
-</p>
-
-{% endblock body %}
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,28 +1,22 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Detalhe do Cliente
-{% endblock title %}
-
+{% block title %}{{ cliente.nome }}{% endblock %}
 {% block body %}
-
-<h1>{{ cliente.nome }}</h1>
-
-<p><strong>Email:</strong> {{ cliente.email }}</p>
-<p><strong>CPF:</strong> {{ cliente.cpf }}</p>
-<p><strong>Telefone:</strong> {{ cliente.telefone }}</p>
-<p><strong>Status:</strong> {{ cliente.status }}</p>
-<p><strong>CNH:</strong> {{ cliente.cnh }}</p>
-<p><strong>Categoria CNH:</strong> {{ cliente.categoria_cnh }}</p>
-<p><strong>Validade CNH:</strong> {{ cliente.validade_cnh }}</p>
-<p><strong>Data de cadastro:</strong> {{ cliente.data_cadastro }}</p>
-
-<p>
-    <a href="{% url 'users_web:clientes_editar' cliente.pk %}">Editar</a>
-    |
-    <a href="{% url 'users_web:clientes_excluir' cliente.pk %}">Deletar</a>
-    |
-    <a href="{% url 'users_web:clientes_listar' %}">Voltar para listagem</a>
-</p>
-
-{% endblock body %}
+<div class="detail-wrap">
+<div class="detail-head"><h1>{{ cliente.nome }}</h1><p>{{ cliente.email }}</p></div>
+<div class="detail-body">
+<div class="detail-grid">
+    <div class="detail-field"><label>CPF</label><span>{{ cliente.cpf }}</span></div>
+    <div class="detail-field"><label>Telefone</label><span>{{ cliente.telefone }}</span></div>
+    <div class="detail-field"><label>CNH</label><span>{{ cliente.cnh }}</span></div>
+    <div class="detail-field"><label>Categoria CNH</label><span>{{ cliente.categoria_cnh }}</span></div>
+    <div class="detail-field"><label>Validade CNH</label><span>{{ cliente.validade_cnh }}</span></div>
+    <div class="detail-field"><label>Status</label><span>{% if cliente.status == 'ATIVO' %}<span class="badge b-green">Ativo</span>{% else %}<span class="badge b-gray">Inativo</span>{% endif %}</span></div>
+    <div class="detail-field"><label>Cadastro</label><span>{{ cliente.data_cadastro }}</span></div>
+</div>
+<div class="form-actions">
+    <a href="{% url 'users_web:clientes_editar' cliente.pk %}" class="btn btn-secondary">Editar</a>
+    <a href="{% url 'users_web:clientes_deletar' cliente.pk %}" class="btn btn-danger">Excluir</a>
+    <a href="{% url 'users_web:clientes_listar' %}" class="btn btn-ghost">Voltar</a>
+</div>
+</div></div>
+{% endblock %}

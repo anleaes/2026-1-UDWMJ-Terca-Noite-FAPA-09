@@ -1,66 +1,40 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Alocações Geradas
-{% endblock title %}
-
+{% block title %}Alocacoes{% endblock %}
 {% block body %}
-
-<h1>Alocações Geradas</h1>
-
-<p>
-    <a href="{% url 'alocacao_web:criar' %}">Gerar alocação de solicitação aprovada</a>
-    |
-    <a href="{% url 'alocacao_web:historicos' %}">Ver histórico</a>
-</p>
-
-<table border="1">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Solicitação</th>
-            <th>Data início</th>
-            <th>Data fim prevista</th>
-            <th>Data fim real</th>
-            <th>KM inicial</th>
-            <th>KM final</th>
-            <th>Status</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        {% for alocacao in alocacoes %}
-            <tr>
-                <td>{{ alocacao.id }}</td>
-                <td>{{ alocacao.solicitacao }}</td>
-                <td>{{ alocacao.data_inicio }}</td>
-                <td>{{ alocacao.data_fim_prevista }}</td>
-                <td>{{ alocacao.data_fim_real }}</td>
-                <td>{{ alocacao.km_inicial }}</td>
-                <td>{{ alocacao.km_final }}</td>
-                <td>{{ alocacao.status }}</td>
-                <td>
-                    <a href="{% url 'alocacao_web:detalhe' alocacao.pk %}">Ver</a>
-                    {% if alocacao.status == 'ativa' %}
-                        |
-                        <a href="{% url 'alocacao_web:finalizar' alocacao.pk %}">Finalizar</a>
-                        |
-                        <a href="{% url 'alocacao_web:cancelar' alocacao.pk %}">Cancelar</a>
-                    {% else %}
-                        |
-                        <a href="{% url 'alocacao_web:editar' alocacao.pk %}">Editar</a>
-                        |
-                        <a href="{% url 'alocacao_web:deletar' alocacao.pk %}">Deletar</a>
-                    {% endif %}
-                </td>
-            </tr>
-        {% empty %}
-            <tr>
-                <td colspan="9">Nenhuma alocação gerada.</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-{% endblock body %}
+<div class="ph">
+    <div><div class="ph-title">Alocacoes</div><div class="ph-sub">Alugueis ativos e encerrados</div></div>
+    <div style="display:flex;gap:8px">
+        <a href="{% url 'alocacao_web:historicos' %}" class="btn btn-ghost">Historico</a>
+        <a href="{% url 'alocacao_web:criar' %}" class="btn btn-primary">Gerar alocacao</a>
+    </div>
+</div>
+<div class="tw"><table>
+<thead><tr><th>#</th><th>Solicitacao</th><th>Inicio</th><th>Fim previsto</th><th>Fim real</th><th>KM</th><th>Status</th><th>Acoes</th></tr></thead>
+<tbody>
+{% for a in alocacoes %}
+<tr>
+    <td><strong>#{{ a.id }}</strong></td>
+    <td>{{ a.solicitacao }}</td>
+    <td>{{ a.data_inicio }}</td>
+    <td>{{ a.data_fim_prevista }}</td>
+    <td>{{ a.data_fim_real|default:"—" }}</td>
+    <td style="font-size:12px;color:var(--muted)">{{ a.km_inicial }} / {{ a.km_final|default:"..." }}</td>
+    <td>{% if a.status == 'ativa' %}<span class="badge b-green">Ativa</span>
+        {% elif a.status == 'finalizada' %}<span class="badge b-blue">Finalizada</span>
+        {% elif a.status == 'cancelada' %}<span class="badge b-gray">Cancelada</span>
+        {% else %}<span class="badge b-gray">{{ a.status }}</span>{% endif %}</td>
+    <td class="td-actions">
+        <a href="{% url 'alocacao_web:detalhe' a.pk %}" class="btn btn-ghost btn-sm">Ver</a>
+        {% if a.status == 'ativa' %}
+        <a href="{% url 'alocacao_web:finalizar' a.pk %}" class="btn btn-success btn-sm">Finalizar</a>
+        <a href="{% url 'alocacao_web:cancelar' a.pk %}" class="btn btn-danger btn-sm">Cancelar</a>
+        {% else %}
+        <a href="{% url 'alocacao_web:editar' a.pk %}" class="btn btn-secondary btn-sm">Editar</a>
+        <a href="{% url 'alocacao_web:deletar' a.pk %}" class="btn btn-danger btn-sm">Excluir</a>
+        {% endif %}
+    </td>
+</tr>
+{% empty %}<tr><td colspan="8"><div class="empty"><h3>Nenhuma alocacao gerada</h3><p>Crie alocacoes a partir de solicitacoes aprovadas.</p></div></td></tr>
+{% endfor %}
+</tbody></table></div>
+{% endblock %}

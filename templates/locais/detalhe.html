@@ -1,24 +1,19 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Detalhe do Local
-{% endblock title %}
-
+{% block title %}{{ local.nome }}{% endblock %}
 {% block body %}
-
-<h1>{{ local.nome }}</h1>
-
-<p><strong>Endereço:</strong> {{ local.endereco }}</p>
-<p><strong>Cidade:</strong> {{ local.cidade }}</p>
-<p><strong>Estado:</strong> {{ local.estado }}</p>
-<p><strong>CEP:</strong> {{ local.cep }}</p>
-
-<p>
-    <a href="{% url 'locais:editar' local.pk %}">Editar</a>
-    |
-    <a href="{% url 'locais:deletar' local.pk %}">Deletar</a>
-    |
-    <a href="{% url 'locais:listar' %}">Voltar para listagem</a>
-</p>
-
-{% endblock body %}
+<div class="detail-wrap">
+<div class="detail-head"><h1>{{ local.nome }}</h1><p>{{ local.cidade }}, {{ local.estado }}</p></div>
+<div class="detail-body">
+<div class="detail-grid">
+    <div class="detail-field"><label>Endereco</label><span>{{ local.endereco }}</span></div>
+    <div class="detail-field"><label>Cidade</label><span>{{ local.cidade }}</span></div>
+    <div class="detail-field"><label>Estado</label><span>{{ local.estado }}</span></div>
+    <div class="detail-field"><label>CEP</label><span>{{ local.cep }}</span></div>
+</div>
+<div class="form-actions">
+    <a href="{% url 'locais:editar' local.pk %}" class="btn btn-secondary">Editar</a>
+    <a href="{% url 'locais:deletar' local.pk %}" class="btn btn-danger">Excluir</a>
+    <a href="{% url 'locais:lista' %}" class="btn btn-ghost">Voltar</a>
+</div>
+</div></div>
+{% endblock %}

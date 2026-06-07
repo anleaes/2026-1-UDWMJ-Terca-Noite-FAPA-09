@@ -1,24 +1,20 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Detalhe do Grupo
-{% endblock title %}
-
+{% block title %}{{ grupo.nome }}{% endblock %}
 {% block body %}
-
-<h1>{{ grupo.nome }}</h1>
-
-<p><strong>Descrição:</strong> {{ grupo.descricao|default:"—" }}</p>
-<p><strong>Capacidade de passageiros:</strong> {{ grupo.capacidade_passageiros }}</p>
-<p><strong>Valor base da diária:</strong> R$ {{ grupo.valor_base_diaria }}</p>
-<p><strong>Ativo:</strong> {{ grupo.ativo }}</p>
-
-<p>
-    <a href="{% url 'grupo_veiculo_web:editar' grupo.pk %}">Editar</a>
-    |
-    <a href="{% url 'grupo_veiculo_web:deletar' grupo.pk %}">Deletar</a>
-    |
-    <a href="{% url 'grupo_veiculo_web:listar' %}">Voltar para listagem</a>
-</p>
-
-{% endblock body %}
+<div class="detail-wrap">
+<div class="detail-head"><h1>{{ grupo.nome }}</h1></div>
+<div class="detail-body">
+<div class="detail-grid">
+    <div class="detail-field"><label>Nome</label><span>{{ grupo.nome }}</span></div>
+    <div class="detail-field"><label>Capacidade</label><span>{{ grupo.capacidade_passageiros }} passageiros</span></div>
+    <div class="detail-field"><label>Valor base / diaria</label><span>R$ {{ grupo.valor_base_diaria }}</span></div>
+    <div class="detail-field"><label>Ativo</label><span>{% if grupo.ativo %}<span class="badge b-green">Ativo</span>{% else %}<span class="badge b-red">Inativo</span>{% endif %}</span></div>
+</div>
+{% if grupo.descricao %}<p style="color:var(--muted);margin-bottom:1rem;">{{ grupo.descricao }}</p>{% endif %}
+<div class="form-actions">
+    <a href="{% url 'grupo_veiculo_web:editar' grupo.pk %}" class="btn btn-secondary">Editar</a>
+    <a href="{% url 'grupo_veiculo_web:deletar' grupo.pk %}" class="btn btn-danger">Excluir</a>
+    <a href="{% url 'grupo_veiculo_web:lista' %}" class="btn btn-ghost">Voltar</a>
+</div>
+</div></div>
+{% endblock %}

@@ -1,30 +1,32 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Detalhe da Solicitacao
-{% endblock title %}
-
+{% block title %}Solicitacao #{{ solicitacao.id }}{% endblock %}
 {% block body %}
-
-<h1>Solicitacao #{{ solicitacao.id }}</h1>
-
-<p><strong>Cliente:</strong> {{ solicitacao.cliente }}</p>
-<p><strong>Veiculo:</strong> {{ solicitacao.veiculo }}</p>
-<p><strong>Local:</strong> {{ solicitacao.local }}</p>
-<p><strong>Funcionario:</strong> {{ solicitacao.funcionario|default:"-" }}</p>
-<p><strong>Data da solicitacao:</strong> {{ solicitacao.data_solicitacao }}</p>
-<p><strong>Inicio desejado:</strong> {{ solicitacao.data_inicio_desejada }}</p>
-<p><strong>Fim desejado:</strong> {{ solicitacao.data_fim_desejada }}</p>
-<p><strong>Motivo:</strong> {{ solicitacao.motivo }}</p>
-<p><strong>Status:</strong> {{ solicitacao.status }}</p>
-<p><strong>Observacao:</strong> {{ solicitacao.observacao|default:"-" }}</p>
-
-<p>
-    <a href="{% url 'solicitacoes:editar' solicitacao.pk %}">Editar</a>
-    |
-    <a href="{% url 'solicitacoes:excluir' solicitacao.pk %}">Excluir</a>
-    |
-    <a href="{% url 'solicitacoes:lista' %}">Voltar</a>
-</p>
-
-{% endblock body %}
+<div class="detail-wrap">
+<div class="detail-head"><h1>Solicitacao #{{ solicitacao.id }}</h1><p>{{ solicitacao.cliente }}</p></div>
+<div class="detail-body">
+<div class="detail-grid">
+    <div class="detail-field"><label>Cliente</label><span>{{ solicitacao.cliente }}</span></div>
+    <div class="detail-field"><label>Veiculo</label><span>{{ solicitacao.veiculo }}</span></div>
+    <div class="detail-field"><label>Local</label><span>{{ solicitacao.local }}</span></div>
+    <div class="detail-field"><label>Funcionario</label><span>{{ solicitacao.funcionario|default:"—" }}</span></div>
+    <div class="detail-field"><label>Data solicitacao</label><span>{{ solicitacao.data_solicitacao }}</span></div>
+    <div class="detail-field"><label>Inicio desejado</label><span>{{ solicitacao.data_inicio_desejada }}</span></div>
+    <div class="detail-field"><label>Fim desejado</label><span>{{ solicitacao.data_fim_desejada }}</span></div>
+    <div class="detail-field"><label>Status</label><span>
+        {% if solicitacao.status == 'pendente' %}<span class="badge b-yellow">Pendente</span>
+        {% elif solicitacao.status == 'aprovada' %}<span class="badge b-green">Aprovada</span>
+        {% elif solicitacao.status == 'recusada' %}<span class="badge b-red">Recusada</span>
+        {% elif solicitacao.status == 'cancelada' %}<span class="badge b-gray">Cancelada</span>
+        {% elif solicitacao.status == 'finalizada' %}<span class="badge b-blue">Finalizada</span>
+        {% else %}<span class="badge b-gray">{{ solicitacao.status }}</span>{% endif %}
+    </span></div>
+</div>
+{% if solicitacao.motivo %}<p style="margin-bottom:.75rem"><strong>Motivo:</strong> {{ solicitacao.motivo }}</p>{% endif %}
+{% if solicitacao.observacao %}<p style="color:var(--muted)">{{ solicitacao.observacao }}</p>{% endif %}
+<div class="form-actions" style="margin-top:1.25rem">
+    <a href="{% url 'solicitacoes:editar' solicitacao.pk %}" class="btn btn-secondary">Editar</a>
+    <a href="{% url 'solicitacoes:excluir' solicitacao.pk %}" class="btn btn-danger">Excluir</a>
+    <a href="{% url 'solicitacoes:lista' %}" class="btn btn-ghost">Voltar</a>
+</div>
+</div></div>
+{% endblock %}

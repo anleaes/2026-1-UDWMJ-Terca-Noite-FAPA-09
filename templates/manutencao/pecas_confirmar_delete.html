@@ -1,22 +1,12 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Excluir Peca
-{% endblock title %}
-
+{% block title %}Excluir Peca{% endblock %}
 {% block body %}
-
-<h1>Excluir Peca</h1>
-
-<p>Tem certeza que deseja excluir a peca #{{ peca.id }}?</p>
-
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Confirmar exclusao</button>
-</form>
-
-<p>
-    <a href="{% url 'manutencao_web:pecas_lista' %}">Cancelar</a>
-</p>
-
-{% endblock body %}
+<div class="confirm-wrap">
+    <h2>Excluir peca?</h2>
+    <p><strong>{{ peca.tipo_peca }}</strong> — {{ peca.fabricante }}.</p>
+    <form method="post" style="display:flex;gap:8px;">{% csrf_token %}
+        <button type="submit" class="btn btn-danger">Confirmar exclusao</button>
+        <a href="{% url 'manutencao_web:pecas_lista' %}" class="btn btn-ghost">Cancelar</a>
+    </form>
+</div>
+{% endblock %}
