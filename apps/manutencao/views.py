@@ -3,7 +3,7 @@ from decimal import Decimal, InvalidOperation
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils.dateparse import parse_date
 from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
@@ -106,6 +106,13 @@ class PecaManutencaoViewSet(viewsets.ModelViewSet):
     ).all()
     serializer_class = PecaManutencaoSerializer
 
+    def perform_destroy(self, instance):
+        if instance.manutencao.status in ('CONCLUIDA', 'CANCELADA'):
+            raise ValidationError({
+                'detail': 'Nao e possivel remover pecas de manutencoes concluidas ou canceladas.'
+            })
+        instance.delete()
+
 
 class ManutencaoListView(ListView):
     model = Manutencao
@@ -118,6 +125,11 @@ class ManutencaoDetailView(DetailView):
     model = Manutencao
     template_name = 'manutencao/detalhe.html'
     context_object_name = 'manutencao'
+
+    def get_queryset(self):
+        return Manutencao.objects.select_related('veiculo').prefetch_related(
+            'pecas_manutencao__peca'
+        )
 
 
 class ManutencaoCreateView(CreateView):
@@ -279,6 +291,35 @@ class PecaManutencaoCreateView(CreateView):
     template_name = 'manutencao/pecas_manutencao_form.html'
     success_url = reverse_lazy('manutencao_web:pecas_manutencao_lista')
 
+    def get_initial(self):
+        initial = super().get_initial()
+        manutencao_id = self.request.GET.get('manutencao')
+        if manutencao_id:
+            initial['manutencao'] = manutencao_id
+        return initial
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['manutencao'].queryset = Manutencao.objects.exclude(
+            status__in=('CONCLUIDA', 'CANCELADA')
+        ).order_by('-data_entrada')
+        return form
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        manutencao_id = self.request.GET.get('manutencao')
+        if manutencao_id:
+            context['manutencao_selecionada'] = get_object_or_404(
+                Manutencao,
+                pk=manutencao_id
+            )
+        return context
+
+    def get_success_url(self):
+        return reverse('manutencao_web:detalhe', kwargs={
+            'pk': self.object.manutencao_id
+        })
+
 
 class PecaManutencaoUpdateView(UpdateView):
     model = PecaManutencao
@@ -286,9 +327,22 @@ class PecaManutencaoUpdateView(UpdateView):
     template_name = 'manutencao/pecas_manutencao_form.html'
     success_url = reverse_lazy('manutencao_web:pecas_manutencao_lista')
 
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.manutencao.status in ('CONCLUIDA', 'CANCELADA'):
+            return redirect('manutencao_web:pecas_manutencao_detalhe', pk=self.object.pk)
+        return super().dispatch(request, *args, **kwargs)
+
 
 class PecaManutencaoDeleteView(DeleteView):
     model = PecaManutencao
     template_name = 'manutencao/pecas_manutencao_confirmar_delete.html'
     context_object_name = 'peca_manutencao'
     success_url = reverse_lazy('manutencao_web:pecas_manutencao_lista')
+
+    def form_valid(self, form):
+        if self.object.manutencao.status in ('CONCLUIDA', 'CANCELADA'):
+            context = self.get_context_data(object=self.object)
+            context['erro'] = 'Nao e possivel remover pecas de manutencoes concluidas ou canceladas.'
+            return self.render_to_response(context)
+        return super().form_valid(form)

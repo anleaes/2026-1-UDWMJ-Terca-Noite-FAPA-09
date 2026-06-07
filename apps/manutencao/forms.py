@@ -59,6 +59,14 @@ class PecaManutencaoForm(forms.ModelForm):
             'preco_unitario',
         ]
 
+    def clean_manutencao(self):
+        manutencao = self.cleaned_data['manutencao']
+        if manutencao.status in ('CONCLUIDA', 'CANCELADA'):
+            raise forms.ValidationError(
+                'Nao e possivel adicionar pecas em manutencoes concluidas ou canceladas.'
+            )
+        return manutencao
+
     def clean_quantidade(self):
         quantidade = self.cleaned_data['quantidade']
         if quantidade <= 0:

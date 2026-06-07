@@ -38,10 +38,12 @@ Peças em Manutenção
                 <td>{{ item.sub_total }}</td>
                 <td>
                     <a href="{% url 'manutencao_web:pecas_manutencao_detalhe' item.pk %}">Ver</a>
-                    |
-                    <a href="{% url 'manutencao_web:pecas_manutencao_editar' item.pk %}">Editar</a>
-                    |
-                    <a href="{% url 'manutencao_web:pecas_manutencao_deletar' item.pk %}">Deletar</a>
+                    {% if item.manutencao.status != 'CONCLUIDA' and item.manutencao.status != 'CANCELADA' %}
+                        |
+                        <a href="{% url 'manutencao_web:pecas_manutencao_editar' item.pk %}">Editar</a>
+                        |
+                        <a href="{% url 'manutencao_web:pecas_manutencao_deletar' item.pk %}">Deletar</a>
+                    {% endif %}
                 </td>
             </tr>
         {% empty %}

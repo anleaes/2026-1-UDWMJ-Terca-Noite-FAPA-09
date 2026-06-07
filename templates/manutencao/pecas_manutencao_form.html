@@ -1,12 +1,16 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Adicionar Peça à Manutenção
+Adicionar Peca a Manutencao
 {% endblock title %}
 
 {% block body %}
 
-<h1>Adicionar Peça Usada na Manutenção</h1>
+<h1>Adicionar Peca Usada na Manutencao</h1>
+
+{% if manutencao_selecionada %}
+    <p><strong>Manutencao:</strong> {{ manutencao_selecionada }}</p>
+{% endif %}
 
 <form method="post">
     {% csrf_token %}
@@ -17,7 +21,11 @@ Adicionar Peça à Manutenção
 </form>
 
 <p>
-    <a href="{% url 'manutencao_web:pecas_manutencao_lista' %}">Voltar</a>
+    {% if manutencao_selecionada %}
+        <a href="{% url 'manutencao_web:detalhe' manutencao_selecionada.pk %}">Voltar</a>
+    {% else %}
+        <a href="{% url 'manutencao_web:pecas_manutencao_lista' %}">Voltar</a>
+    {% endif %}
 </p>
 
 {% endblock body %}
