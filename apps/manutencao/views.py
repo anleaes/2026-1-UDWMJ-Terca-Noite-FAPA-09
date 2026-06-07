@@ -140,7 +140,7 @@ class ManutencaoCreateView(CreateView):
 
     def form_valid(self, form):
         try:
-            abrir_manutencao(
+            self.object = abrir_manutencao(
                 veiculo=form.cleaned_data['veiculo'],
                 tipo_manutencao=form.cleaned_data['tipo_manutencao'],
                 descricao=form.cleaned_data['descricao'],
