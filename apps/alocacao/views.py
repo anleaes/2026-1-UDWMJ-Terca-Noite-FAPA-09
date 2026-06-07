@@ -127,7 +127,7 @@ class AlocacaoCreateView(CreateView):
 
     def form_valid(self, form):
         try:
-            criar_alocacao(
+            self.object = criar_alocacao(
                 solicitacao=form.cleaned_data['solicitacao'],
                 data_inicio=form.cleaned_data['data_inicio'],
                 data_fim_prevista=form.cleaned_data['data_fim_prevista'],

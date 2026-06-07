@@ -31,9 +31,13 @@ def criar_alocacao(
 ):
     if solicitacao.status != 'aprovada':
         raise ValidationError('Apenas solicitacoes aprovadas podem gerar alocacao.')
-
-    if hasattr(solicitacao, 'alocacao'):
-        raise ValidationError('Esta solicitacao ja possui uma alocacao.')
+    
+    solicitacao.refresh_from_db()
+    try:
+        _ = solicitacao.alocacao
+        raise ValidationError('A solicitacao ja possui uma alocacao associada.')
+    except Alocacao.DoesNotExist:
+        pass
 
     if data_fim_prevista < data_inicio:
         raise ValidationError('A data fim prevista nao pode ser anterior a data de inicio.')
