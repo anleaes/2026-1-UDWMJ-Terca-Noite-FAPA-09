@@ -15,11 +15,15 @@ Detalhe da Peca em Manutencao
 <p><strong>Subtotal:</strong> {{ peca_manutencao.sub_total }}</p>
 
 <p>
-    <a href="{% url 'manutencao_web:pecas_manutencao_editar' peca_manutencao.pk %}">Editar</a>
+    {% if peca_manutencao.manutencao.status != 'CONCLUIDA' and peca_manutencao.manutencao.status != 'CANCELADA' %}
+        <a href="{% url 'manutencao_web:pecas_manutencao_editar' peca_manutencao.pk %}">Editar</a>
+        |
+        <a href="{% url 'manutencao_web:pecas_manutencao_deletar' peca_manutencao.pk %}">Deletar</a>
+        |
+    {% endif %}
+    <a href="{% url 'manutencao_web:detalhe' peca_manutencao.manutencao.pk %}">Voltar para manutencao</a>
     |
-    <a href="{% url 'manutencao_web:pecas_manutencao_deletar' peca_manutencao.pk %}">Deletar</a>
-    |
-    <a href="{% url 'manutencao_web:pecas_manutencao_lista' %}">Voltar</a>
+    <a href="{% url 'manutencao_web:pecas_manutencao_lista' %}">Ver todas</a>
 </p>
 
 {% endblock body %}

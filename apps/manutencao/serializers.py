@@ -57,6 +57,14 @@ class PecaManutencaoSerializer(serializers.ModelSerializer):
             'sub_total',
         ]
 
+    def validate(self, attrs):
+        manutencao = attrs.get('manutencao', getattr(self.instance, 'manutencao', None))
+        if manutencao and manutencao.status in ('CONCLUIDA', 'CANCELADA'):
+            raise serializers.ValidationError({
+                'manutencao': 'Nao e possivel adicionar pecas em manutencoes concluidas ou canceladas.'
+            })
+        return attrs
+
     def validate_quantidade(self, value):
         if value <= 0:
             raise serializers.ValidationError('A quantidade deve ser maior que zero.')
