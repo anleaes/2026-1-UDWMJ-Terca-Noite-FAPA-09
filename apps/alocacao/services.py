@@ -103,7 +103,8 @@ def finalizar_alocacao(
 
     veiculo = alocacao.solicitacao.veiculo
     veiculo.status = 'disponivel'
-    veiculo.save(update_fields=['status'])
+    veiculo.quilometragem = km_final
+    veiculo.save(update_fields=['status', 'quilometragem'])
 
     solicitacao = alocacao.solicitacao
     solicitacao.status = 'finalizada'
