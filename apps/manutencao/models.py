@@ -53,5 +53,9 @@ class PecaManutencao(models.Model):
     preco_unitario = models.DecimalField(max_digits=10, decimal_places=2)
     sub_total = models.DecimalField(max_digits=10, decimal_places=2)
 
+    def save(self, *args, **kwargs):
+        self.sub_total = self.quantidade * self.preco_unitario
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f'{self.quantidade}x {self.peca} - {self.manutencao}'
