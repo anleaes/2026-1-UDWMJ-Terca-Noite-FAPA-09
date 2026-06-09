@@ -9,7 +9,19 @@
     </div>
 </div>
 <div class="tw"><table>
-<thead><tr><th>#</th><th>Solicitacao</th><th>Inicio</th><th>Fim previsto</th><th>Fim real</th><th>KM</th><th>Status</th><th>Acoes</th></tr></thead>
+<thead>
+<tr>
+    <th>#</th>
+    <th>Solicitacao</th>
+    <th>Inicio</th>
+    <th>Fim previsto</th>
+    <th>Fim real</th>
+    <th>Valor previsto</th>
+    <th>KM</th>
+    <th>Status</th>
+    <th>Acoes</th>
+</tr>
+</thead>
 <tbody>
 {% for a in alocacoes %}
 <tr>
@@ -18,7 +30,18 @@
     <td>{{ a.data_inicio }}</td>
     <td>{{ a.data_fim_prevista }}</td>
     <td>{{ a.data_fim_real|default:"—" }}</td>
-    <td style="font-size:12px;color:var(--muted)">{{ a.km_inicial }} / {{ a.km_final|default:"..." }}</td>
+
+    <td>
+        <strong>R$ {{ a.valor_total_previsto|floatformat:2 }}</strong>
+        <div style="font-size:12px;color:var(--muted)">
+            {{ a.quantidade_dias }} diária(s) × R$ {{ a.valor_diaria|floatformat:2 }}
+        </div>
+    </td>
+
+    <td style="font-size:12px;color:var(--muted)">
+        {{ a.km_inicial }} / {{ a.km_final|default:"..." }}
+    </td>
+
     <td>{% if a.status == 'ativa' %}<span class="badge b-green">Ativa</span>
         {% elif a.status == 'finalizada' %}<span class="badge b-blue">Finalizada</span>
         {% elif a.status == 'cancelada' %}<span class="badge b-gray">Cancelada</span>
@@ -34,7 +57,7 @@
         {% endif %}
     </td>
 </tr>
-{% empty %}<tr><td colspan="8"><div class="empty"><h3>Nenhuma alocacao gerada</h3><p>Crie alocacoes a partir de solicitacoes aprovadas.</p></div></td></tr>
+{% empty %}<tr><td colspan="9"><div class="empty"><h3>Nenhuma alocacao gerada</h3><p>Crie alocacoes a partir de solicitacoes aprovadas.</p></div></td></tr>
 {% endfor %}
 </tbody></table></div>
 {% endblock %}

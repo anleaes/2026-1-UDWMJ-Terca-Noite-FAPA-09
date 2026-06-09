@@ -52,6 +52,7 @@ class SolicitacaoViewSet(viewsets.ModelViewSet):
     queryset = Solicitacao.objects.select_related(
         'cliente',
         'veiculo',
+        'veiculo__grupo',
         'local',
         'funcionario'
     ).all()

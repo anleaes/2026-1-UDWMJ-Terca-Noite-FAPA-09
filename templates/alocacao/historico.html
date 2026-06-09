@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Historico de Alocacoes{% endblock %}
+{% block body %}
+<div class="ph">
+    <div><div class="ph-title">Historico de Alocacoes</div><div class="ph-sub">Registro de alteracoes de status</div></div>
+    <a href="{% url 'alocacao_web:lista' %}" class="btn btn-ghost">Voltar as alocacoes</a>
+</div>
+<div class="tw"><table>
+<thead>
+<tr>
+    <th>Alocacao</th>
+    <th>Data</th>
+    <th>Status atual</th>
+    <th>Responsavel</th>
+    <th>Observacao</th>
+</tr>
+</thead>
+<tbody>
+{% for h in historicos %}
+<tr>
+    <td>{{ h.alocacao }}</td>
+    <td>{{ h.data_registro }}</td>
+
+    <td>
+        {% if h.alocacao.status == 'ativa' %}
+            <span class="badge b-green">Ativa</span>
+        {% elif h.alocacao.status == 'finalizada' %}
+            <span class="badge b-blue">Finalizada</span>
+        {% elif h.alocacao.status == 'cancelada' %}
+            <span class="badge b-gray">Cancelada</span>
+        {% else %}
+            <span class="badge b-gray">{{ h.alocacao.status }}</span>
+        {% endif %}
+    </td>
+
+    <td>
+        {% if h.alocacao.solicitacao.funcionario %}
+            {{ h.alocacao.solicitacao.funcionario }}
+        {% else %}
+            {{ h.responsavel_alteracao|default:"—" }}
+        {% endif %}
+    </td>
+
+    <td>{{ h.observacao|default:"—" }}</td>
+</tr>
+    <td style="color:var(--muted);font-size:12px">{{ h.observacao|default:"—" }}</td>
+</tr>
+{% empty %}<tr><td colspan="6"><div class="empty"><h3>Nenhum historico registrado</h3></div></td></tr>
+{% endfor %}
+</tbody></table></div>
+{% endblock %}

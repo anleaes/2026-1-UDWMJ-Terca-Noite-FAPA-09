@@ -28,6 +28,30 @@ class Alocacao(models.Model):
     def __str__(self):
         return f'Alocacao #{self.id} - {self.solicitacao}'
 
+    @property
+    def quantidade_dias(self):
+        if not self.data_inicio or not self.data_fim_prevista:
+            return 0
+
+        dias = (self.data_fim_prevista - self.data_inicio).days
+
+        return max(dias, 1)
+
+    @property
+    def valor_diaria(self):
+        if (
+            not self.solicitacao
+            or not self.solicitacao.veiculo
+            or not self.solicitacao.veiculo.grupo
+        ):
+            return 0
+
+        return self.solicitacao.veiculo.grupo.valor_base_diaria
+
+    @property
+    def valor_total_previsto(self):
+        return self.valor_diaria * self.quantidade_dias
+
 
 class HistoricoAlocacao(models.Model):
     alocacao = models.ForeignKey(
