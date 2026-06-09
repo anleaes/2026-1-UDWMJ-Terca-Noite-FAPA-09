@@ -13,6 +13,22 @@
     </span></div>
     <div class="detail-field"><label>Data inicio</label><span>{{ alocacao.data_inicio }}</span></div>
     <div class="detail-field"><label>Data fim prevista</label><span>{{ alocacao.data_fim_prevista }}</span></div>
+
+    <div class="detail-field">
+        <label>Quantidade de diárias</label>
+        <span>{{ alocacao.quantidade_dias }}</span>
+    </div>
+
+    <div class="detail-field">
+        <label>Valor da diária</label>
+        <span>R$ {{ alocacao.valor_diaria|floatformat:2 }}</span>
+    </div>
+
+    <div class="detail-field">
+        <label>Valor total previsto</label>
+        <span><strong>R$ {{ alocacao.valor_total_previsto|floatformat:2 }}</strong></span>
+    </div>
+
     <div class="detail-field"><label>Data fim real</label><span>{{ alocacao.data_fim_real|default:"—" }}</span></div>
     <div class="detail-field"><label>KM inicial</label><span>{{ alocacao.km_inicial }} km</span></div>
     <div class="detail-field"><label>KM final</label><span>{{ alocacao.km_final|default:"—" }}</span></div>

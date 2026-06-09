@@ -23,7 +23,11 @@ def _raise_api_validation_error(error):
 
 
 class AlocacaoViewSet(viewsets.ModelViewSet):
-    queryset = Alocacao.objects.select_related('solicitacao').all()
+    queryset = Alocacao.objects.select_related(
+        'solicitacao',
+        'solicitacao__veiculo',
+        'solicitacao__veiculo__grupo'
+    ).all()
     serializer_class = AlocacaoSerializer
 
     def perform_update(self, serializer):
@@ -237,6 +241,33 @@ class AlocacaoCancelarView(View):
 
 class HistoricoAlocacaoListView(ListView):
     model = HistoricoAlocacao
-    template_name = 'alocacao/historicos.html'
+    template_name = 'alocacao/historico.html'
     context_object_name = 'historicos'
-    queryset = HistoricoAlocacao.objects.select_related('alocacao').all().order_by('-data_registro')
+
+    def get_queryset(self):
+        historicos = (
+            HistoricoAlocacao.objects
+            .select_related(
+                'alocacao',
+                'alocacao__solicitacao',
+                'alocacao__solicitacao__funcionario'
+            )
+            .order_by('alocacao_id', '-data_registro', '-id')
+        )
+
+        ultimos_ids = {}
+
+        for historico in historicos:
+            if historico.alocacao_id not in ultimos_ids:
+                ultimos_ids[historico.alocacao_id] = historico.id
+
+        return (
+            HistoricoAlocacao.objects
+            .filter(id__in=ultimos_ids.values())
+            .select_related(
+                'alocacao',
+                'alocacao__solicitacao',
+                'alocacao__solicitacao__funcionario'
+            )
+            .order_by('-data_registro', '-id')
+        )

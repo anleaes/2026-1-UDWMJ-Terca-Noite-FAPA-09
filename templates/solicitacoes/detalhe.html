@@ -12,6 +12,22 @@
     <div class="detail-field"><label>Data solicitacao</label><span>{{ solicitacao.data_solicitacao }}</span></div>
     <div class="detail-field"><label>Inicio desejado</label><span>{{ solicitacao.data_inicio_desejada }}</span></div>
     <div class="detail-field"><label>Fim desejado</label><span>{{ solicitacao.data_fim_desejada }}</span></div>
+
+    <div class="detail-field">
+        <label>Quantidade de diárias</label>
+        <span>{{ solicitacao.quantidade_dias }}</span>
+    </div>
+
+    <div class="detail-field">
+        <label>Valor da diária</label>
+        <span>R$ {{ solicitacao.valor_diaria|floatformat:2 }}</span>
+    </div>
+
+    <div class="detail-field">
+        <label>Valor total estimado</label>
+        <span><strong>R$ {{ solicitacao.valor_total_estimado|floatformat:2 }}</strong></span>
+    </div>
+
     <div class="detail-field"><label>Status</label><span>
         {% if solicitacao.status == 'pendente' %}<span class="badge b-yellow">Pendente</span>
         {% elif solicitacao.status == 'aprovada' %}<span class="badge b-green">Aprovada</span>
