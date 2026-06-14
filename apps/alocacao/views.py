@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.dateparse import parse_date
@@ -29,6 +30,59 @@ class AlocacaoViewSet(viewsets.ModelViewSet):
         'solicitacao__veiculo__grupo'
     ).all()
     serializer_class = AlocacaoSerializer
+
+    def partial_update(self, request, *args, **kwargs):
+        alocacao = self.get_object()
+        novo_status = request.data.get('status')
+
+        if alocacao.status == 'ativa' and novo_status in ['finalizada', 'cancelada']:
+            try:
+                if novo_status == 'finalizada':
+                    data_recebida = request.data.get('data_fim_real')
+
+                    if data_recebida:
+                        data_fim_real = parse_date(data_recebida)
+
+                        if data_fim_real is None:
+                            raise DjangoValidationError(
+                                'Informe uma data valida no formato YYYY-MM-DD.'
+                            )
+                    else:
+                        data_fim_real = alocacao.data_fim_prevista
+
+                    km_recebido = request.data.get('km_final')
+
+                    if km_recebido not in [None, '']:
+                        km_final = float(km_recebido)
+                    else:
+                        km_atual_veiculo = alocacao.solicitacao.veiculo.quilometragem
+                        km_final = max(
+                            float(alocacao.km_inicial),
+                            float(km_atual_veiculo or alocacao.km_inicial)
+                        )
+
+                    alocacao = finalizar_alocacao(
+                        alocacao=alocacao,
+                        data_fim_real=data_fim_real,
+                        km_final=km_final,
+                        observacao=request.data.get('observacao'),
+                        responsavel_alteracao=request.data.get('responsavel_alteracao', 'API')
+                    )
+
+                elif novo_status == 'cancelada':
+                    alocacao = cancelar_alocacao(
+                        alocacao=alocacao,
+                        observacao=request.data.get('observacao'),
+                        responsavel_alteracao=request.data.get('responsavel_alteracao', 'API')
+                    )
+
+            except (DjangoValidationError, ValueError) as error:
+                _raise_api_validation_error(error)
+
+            serializer = self.get_serializer(alocacao)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return super().partial_update(request, *args, **kwargs)
 
     def perform_update(self, serializer):
         if self.get_object().status == 'ativa':

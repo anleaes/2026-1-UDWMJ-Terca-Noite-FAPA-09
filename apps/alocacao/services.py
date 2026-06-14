@@ -134,10 +134,14 @@ def cancelar_alocacao(
     alocacao.status = 'cancelada'
     alocacao.observacao = observacao or alocacao.observacao
     alocacao.save(update_fields=['status', 'observacao'])
-
+    
     veiculo = alocacao.solicitacao.veiculo
     veiculo.status = 'disponivel'
     veiculo.save(update_fields=['status'])
+
+    solicitacao = alocacao.solicitacao
+    solicitacao.status = 'cancelada'
+    solicitacao.save(update_fields=['status'])
 
     registrar_historico_alocacao(
         alocacao=alocacao,
