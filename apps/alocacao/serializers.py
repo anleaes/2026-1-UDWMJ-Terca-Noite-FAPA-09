@@ -37,8 +37,22 @@ class AlocacaoSerializer(serializers.ModelSerializer):
             'observacao',
             'valor_diaria',
             'quantidade_dias',
+            'valor_locacao_sem_taxa',
+            'taxa_devolucao_localidade',
             'valor_total_previsto',
         ]
+    
+    valor_locacao_sem_taxa = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        read_only=True
+    )
+
+    taxa_devolucao_localidade = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        read_only=True
+    )
 
 
 class HistoricoAlocacaoSerializer(serializers.ModelSerializer):

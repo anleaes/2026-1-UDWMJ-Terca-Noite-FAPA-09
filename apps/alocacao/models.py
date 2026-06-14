@@ -39,18 +39,25 @@ class Alocacao(models.Model):
 
     @property
     def valor_diaria(self):
-        if (
-            not self.solicitacao
-            or not self.solicitacao.veiculo
-            or not self.solicitacao.veiculo.grupo
-        ):
+        if not self.solicitacao:
             return 0
 
-        return self.solicitacao.veiculo.grupo.valor_base_diaria
+        return self.solicitacao.valor_diaria
+
+    @property
+    def valor_locacao_sem_taxa(self):
+        return self.valor_diaria * self.quantidade_dias
+
+    @property
+    def taxa_devolucao_localidade(self):
+        if not self.solicitacao:
+            return 0
+
+        return self.solicitacao.taxa_devolucao_localidade
 
     @property
     def valor_total_previsto(self):
-        return self.valor_diaria * self.quantidade_dias
+        return self.valor_locacao_sem_taxa + self.taxa_devolucao_localidade
 
 
 class HistoricoAlocacao(models.Model):

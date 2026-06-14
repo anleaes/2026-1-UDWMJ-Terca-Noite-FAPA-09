@@ -59,18 +59,45 @@ class Solicitacao(models.Model):
         return f'Solicitacao #{self.id} - {self.cliente.nome}'
 
     @property
+    def local_devolucao_efetivo(self):
+        return self.local_devolucao or self.local
+
+    @property
     def quantidade_dias(self):
         if not self.data_inicio_desejada or not self.data_fim_desejada:
             return 0
+
         dias = (self.data_fim_desejada - self.data_inicio_desejada).days
+
         return max(dias, 1)
 
     @property
     def valor_diaria(self):
         if not self.veiculo or not self.veiculo.grupo:
             return 0
+
         return self.veiculo.grupo.valor_base_diaria
 
     @property
-    def valor_total_estimado(self):
+    def valor_locacao_sem_taxa(self):
         return self.valor_diaria * self.quantidade_dias
+
+    @property
+    def devolucao_em_local_diferente(self):
+        local_devolucao = self.local_devolucao_efetivo
+
+        if not self.local or not local_devolucao:
+            return False
+
+        return self.local_id != local_devolucao.id
+
+    @property
+    def taxa_devolucao_localidade(self):
+        if not self.devolucao_em_local_diferente:
+            return self.valor_diaria * 0
+
+        return self.valor_diaria * 10 / 100
+
+    @property
+    def valor_total_estimado(self):
+        return self.valor_locacao_sem_taxa + self.taxa_devolucao_localidade
