@@ -9,7 +9,7 @@ class ClienteSerializer(serializers.ModelSerializer):
             'id', 'nome', 'email', 'senha', 'cpf', 'telefone', 'status',
             'cnh', 'categoria_cnh', 'validade_cnh', 'data_cadastro',
         ]
-        extra_kwargs = {'senha': {'write_only': True}}
+        extra_kwargs = {'senha': {'write_only': False}}
 
 
 class FuncionarioSerializer(serializers.ModelSerializer):
@@ -19,4 +19,4 @@ class FuncionarioSerializer(serializers.ModelSerializer):
             'id', 'nome', 'email', 'senha', 'cpf', 'telefone', 'status',
             'nivel_acesso', 'cargo', 'ativo',
         ]
-        extra_kwargs = {'senha': {'write_only': True}}
+        extra_kwargs = {'senha': {'write_only': False}}

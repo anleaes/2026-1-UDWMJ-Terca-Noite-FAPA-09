@@ -1,12 +1,12 @@
 """
 Comando: python manage.py popular_banco
 
-Popula o banco com dados de teste realistas:
-  - 4 grupos de veiculo
-  - 10 veiculos
-  - 10 entradas no catalogo (com URLs de imagem do Imgur)
-  - 5 clientes
-  - 3 funcionarios
+Popula o banco com dados de teste realistas e VARIADOS:
+  - 5 grupos de veiculo (Economico, Compacto, Intermediario, SUV, Premium)
+  - ~30 veiculos distribuidos em varias marcas e modelos (para filtros em cascata)
+  - 1 entrada de catalogo para cada veiculo
+  - 5 clientes (senha padrao: senha123)
+  - 3 funcionarios (senha padrao: senha123)
   - 4 locais
   - 6 solicitacoes (varios status)
   - 2 alocacoes ativas
@@ -35,7 +35,6 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def handle(self, *args, **options):
-        # imports aqui para evitar problemas de importacao circular
         from grupo_veiculo.models import GrupoVeiculo
         from veiculo.models import Veiculo
         from catalogo.models import Catalogo
@@ -61,16 +60,15 @@ class Command(BaseCommand):
             Peca.objects.all().delete()
             self.stdout.write(self.style.SUCCESS('Dados apagados.'))
 
-        today = datetime.date.today
-
         # ── GRUPOS ────────────────────────────────────────────────────────
         self.stdout.write('Criando grupos...')
         grupos = {}
         dados_grupos = [
-            ('Economico',  'Veiculos compactos e de baixo consumo, ideais para uso urbano.',        5,  89.90),
-            ('Intermediario', 'Sedas e hatches medios com bom conforto e espaco interno.',          5, 129.90),
-            ('SUV',        'Utilitarios esportivos com maior espaco e conforto para familias.',     7, 199.90),
-            ('Premium',    'Veiculos de alto padrao com acabamento e tecnologia superiores.',       5, 349.90),
+            ('Economico',     'Compactos de baixo consumo, ideais para uso urbano.',                    5,  89.90),
+            ('Compacto',      'Hatches e sedans compactos com bom equilibrio entre custo e conforto.',  5, 109.90),
+            ('Intermediario', 'Sedans e hatches medios com bom espaco interno e conforto.',             5, 139.90),
+            ('SUV',           'Utilitarios esportivos com mais espaco para familias e bagagem.',        7, 199.90),
+            ('Premium',       'Veiculos de alto padrao com acabamento e tecnologia superiores.',        5, 379.90),
         ]
         for nome, desc, cap, valor in dados_grupos:
             g, criado = GrupoVeiculo.objects.get_or_create(
@@ -83,22 +81,74 @@ class Command(BaseCommand):
             self.stdout.write(f'  {nome} ({status})')
 
         # ── VEICULOS ──────────────────────────────────────────────────────
+        # Lista pensada para os filtros em cascata: cada GRUPO tem varias MARCAS,
+        # e cada MARCA tem 1+ MODELOS. Total ~30 veiculos.
         self.stdout.write('Criando veiculos...')
         veiculos_data = [
-            # grupo,          placa,       renavam,         marca,      modelo,        fab,  mod,  cor,          km,      comb
-            ('Economico',    'ABC1D23',  '12345678901',  'Volkswagen', 'Polo',        2022, 2023, 'Prata',       18000, 'flex'),
-            ('Economico',    'DEF2E34',  '23456789012',  'Fiat',       'Argo',        2021, 2022, 'Branco',      32000, 'flex'),
-            ('Economico',    'GHI3F45',  '34567890123',  'Chevrolet',  'Onix',        2023, 2023, 'Preto',        9000, 'flex'),
-            ('Intermediario','JKL4G56',  '45678901234',  'Volkswagen', 'Virtus',      2022, 2022, 'Cinza',       24000, 'flex'),
-            ('Intermediario','MNO5H67',  '56789012345',  'Toyota',     'Corolla',     2021, 2022, 'Branco',      41000, 'hibrido'),
-            ('Intermediario','PQR6I78',  '67890123456',  'Honda',      'Civic',       2023, 2023, 'Azul',         7500, 'gasolina'),
-            ('SUV',          'STU7J89',  '78901234567',  'Jeep',       'Compass',     2022, 2022, 'Preto',       28000, 'flex'),
-            ('SUV',          'VWX8K90',  '89012345678',  'Toyota',     'SW4',         2021, 2022, 'Branco',      55000, 'diesel'),
-            ('Premium',      'YZA9L01',  '90123456789',  'BMW',        '320i',        2023, 2023, 'Cinza',        4200, 'gasolina'),
-            ('Premium',      'BCD0M12',  '01234567890',  'Mercedes',   'C 200',       2022, 2023, 'Preto',       11000, 'gasolina'),
+            # (grupo,          placa,      renavam,       marca,        modelo,         fab,  mod,  cor,         km,    comb,       preco,  destaque, desc_comercial)
+
+            # === ECONOMICO ===
+            ('Economico',     'ECN0A01', '10000000001', 'Volkswagen', 'Gol',           2021, 2022, 'Branco',   38000, 'flex',      89.90, False, 'Hatch economico, ideal para uso urbano e baixa manutencao.'),
+            ('Economico',     'ECN0A02', '10000000002', 'Volkswagen', 'up!',           2020, 2021, 'Vermelho', 45000, 'flex',      85.90, False, 'Compacto agil, perfeito para o dia a dia da cidade.'),
+            ('Economico',     'ECN0A03', '10000000003', 'Fiat',       'Mobi',          2022, 2023, 'Cinza',    18000, 'flex',      82.90, False, 'O mais economico da frota. Otimo custo-beneficio.'),
+            ('Economico',     'ECN0A04', '10000000004', 'Fiat',       'Uno',           2021, 2021, 'Branco',   29000, 'flex',      84.90, False, 'Classico brasileiro: simples, robusto e barato.'),
+            ('Economico',     'ECN0A05', '10000000005', 'Chevrolet',  'Joy',           2020, 2021, 'Prata',    52000, 'flex',      88.90, False, 'Compacto confiavel com bom porta-malas.'),
+            ('Economico',     'ECN0A06', '10000000006', 'Renault',    'Kwid',          2022, 2022, 'Laranja',  21000, 'flex',      87.90, True,  'Visual de SUV em tamanho compacto. Estiloso e economico.'),
+
+            # === COMPACTO ===
+            ('Compacto',      'CMP0B01', '20000000001', 'Volkswagen', 'Polo',          2022, 2023, 'Prata',    18000, 'flex',     109.90, True,  'O hatch mais vendido do segmento. Tecnologia e seguranca.'),
+            ('Compacto',      'CMP0B02', '20000000002', 'Fiat',       'Argo',          2022, 2022, 'Branco',   24000, 'flex',     104.90, False, 'Design moderno e interior amplo para um hatch de entrada.'),
+            ('Compacto',      'CMP0B03', '20000000003', 'Chevrolet',  'Onix',          2023, 2023, 'Preto',     9000, 'flex',     119.90, True,  'O hatch mais vendido do Brasil. Confortavel e pratico.'),
+            ('Compacto',      'CMP0B04', '20000000004', 'Hyundai',    'HB20',          2022, 2023, 'Azul',     16000, 'flex',     112.90, False, 'Hatch sul-coreano com bom acabamento e garantia.'),
+            ('Compacto',      'CMP0B05', '20000000005', 'Renault',    'Sandero',       2021, 2022, 'Cinza',    34000, 'flex',     102.90, False, 'Hatch com porta-malas generoso e bom conforto.'),
+            ('Compacto',      'CMP0B06', '20000000006', 'Hyundai',    'HB20S',         2022, 2023, 'Prata',    19000, 'flex',     118.90, False, 'Versao sedan do HB20: mais espaco no porta-malas.'),
+
+            # === INTERMEDIARIO ===
+            ('Intermediario', 'INT0C01', '30000000001', 'Volkswagen', 'Virtus',        2022, 2023, 'Cinza',    24000, 'flex',     139.90, False, 'Sedan elegante com espaco interno generoso. Otimo para viagens.'),
+            ('Intermediario', 'INT0C02', '30000000002', 'Volkswagen', 'Jetta',         2022, 2022, 'Preto',    31000, 'gasolina', 159.90, False, 'Sedan medio premium com motor TSI e cambio automatico.'),
+            ('Intermediario', 'INT0C03', '30000000003', 'Toyota',     'Corolla',       2022, 2023, 'Branco',   28000, 'hibrido',  179.90, True,  'Tecnologia hibrida que combina economia e desempenho.'),
+            ('Intermediario', 'INT0C04', '30000000004', 'Toyota',     'Yaris Sedan',   2021, 2022, 'Prata',    36000, 'flex',     139.90, False, 'Sedan compacto da Toyota: confiavel e economico.'),
+            ('Intermediario', 'INT0C05', '30000000005', 'Honda',      'Civic',         2023, 2023, 'Azul',      7500, 'gasolina', 189.90, True,  'Esportividade e tecnologia em um sedan premium.'),
+            ('Intermediario', 'INT0C06', '30000000006', 'Honda',      'City',          2022, 2023, 'Cinza',    19000, 'flex',     159.90, False, 'Sedan compacto Honda: refinamento e baixo consumo.'),
+            ('Intermediario', 'INT0C07', '30000000007', 'Nissan',     'Sentra',        2021, 2022, 'Preto',    41000, 'gasolina', 149.90, False, 'Sedan medio com bom conforto e equipamentos.'),
+
+            # === SUV ===
+            ('SUV',           'SUV0D01', '40000000001', 'Jeep',       'Renegade',      2022, 2022, 'Verde',    27000, 'flex',     199.90, False, 'SUV compacto com visual aventureiro e bom espaco interno.'),
+            ('SUV',           'SUV0D02', '40000000002', 'Jeep',       'Compass',       2022, 2023, 'Preto',    28000, 'flex',     239.90, True,  'SUV medio com tracao 4x4 opcional. Ideal para cidade e estrada.'),
+            ('SUV',           'SUV0D03', '40000000003', 'Toyota',     'Corolla Cross', 2022, 2023, 'Branco',   22000, 'hibrido',  249.90, True,  'SUV hibrido: economia de carro pequeno com altura de SUV.'),
+            ('SUV',           'SUV0D04', '40000000004', 'Toyota',     'SW4',           2021, 2022, 'Prata',    55000, 'diesel',   349.90, False, 'SUV grande, motor diesel, 7 lugares. Para familias.'),
+            ('SUV',           'SUV0D05', '40000000005', 'Honda',      'HR-V',          2022, 2023, 'Prata',    21000, 'flex',     219.90, False, 'SUV compacto Honda: design moderno e dirigibilidade.'),
+            ('SUV',           'SUV0D06', '40000000006', 'Volkswagen', 'T-Cross',       2022, 2023, 'Azul',     23000, 'flex',     219.90, False, 'SUV compacto VW com motor turbo e otimo acabamento.'),
+            ('SUV',           'SUV0D07', '40000000007', 'Nissan',     'Kicks',         2021, 2022, 'Vermelho', 39000, 'flex',     189.90, False, 'SUV compacto com bom porta-malas e visual marcante.'),
+
+            # === PREMIUM ===
+            ('Premium',       'PRM0E01', '50000000001', 'BMW',        '320i',          2023, 2023, 'Cinza',     4200, 'gasolina', 389.90, True,  'Esportividade e luxo alemaes. Acabamento impecavel.'),
+            ('Premium',       'PRM0E02', '50000000002', 'BMW',        'X1',            2022, 2023, 'Branco',   11500, 'gasolina', 419.90, False, 'SUV premium compacto da BMW. Tecnologia de ponta.'),
+            ('Premium',       'PRM0E03', '50000000003', 'Mercedes',   'C 200',         2022, 2023, 'Preto',    11000, 'gasolina', 429.90, True,  'Icone da elegancia. Motor 1.5T com desempenho refinado.'),
+            ('Premium',       'PRM0E04', '50000000004', 'Mercedes',   'GLA 200',       2022, 2022, 'Cinza',    15000, 'gasolina', 449.90, False, 'SUV compacto Mercedes-Benz: luxo em formato urbano.'),
+            ('Premium',       'PRM0E05', '50000000005', 'Audi',       'A3 Sedan',      2023, 2023, 'Branco',    8500, 'gasolina', 369.90, False, 'Sedan compacto premium com cambio S tronic.'),
+            ('Premium',       'PRM0E06', '50000000006', 'Audi',       'Q3',            2022, 2023, 'Preto',    13800, 'gasolina', 439.90, False, 'SUV premium Audi com motor TFSI e Virtual Cockpit.'),
         ]
+
+        # URLs de imagens (Unsplash). Se alguma falhar, o front mostra placeholder.
+        fotos_genericas = [
+            'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800',  # Lamborghini
+            'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800',  # Mercedes vermelho
+            'https://images.unsplash.com/photo-1542362567-b07e54358753?w=800',  # sedan
+            'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800',  # sedan moderno
+            'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=800',  # classico
+            'https://images.unsplash.com/photo-1568844293986-8d0400bd4745?w=800',  # generico
+            'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800',  # esportivo
+            'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800',  # SUV
+            'https://images.unsplash.com/photo-1502877338535-766e1452684a?w=800',  # SUV branco
+            'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800',  # BMW
+            'https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=800',  # premium
+            'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?w=800',  # generico
+        ]
+
         veiculos = []
-        for grupo_nome, placa, renavam, marca, modelo, fab, mod, cor, km, comb in veiculos_data:
+        for i, dados in enumerate(veiculos_data):
+            grupo_nome, placa, renavam, marca, modelo, fab, mod, cor, km, comb, preco, destaque, desc_comercial = dados
             v, criado = Veiculo.objects.get_or_create(
                 placa=placa,
                 defaults=dict(
@@ -113,62 +163,30 @@ class Command(BaseCommand):
             status = 'criado' if criado else 'ja existe'
             self.stdout.write(f'  {marca} {modelo} {placa} ({status})')
 
-        # ── CATALOGO ──────────────────────────────────────────────────────
-        # URLs de imagens publicas do Imgur (JPEGs diretos, sem redirecionamento)
-        self.stdout.write('Criando catalogo...')
-        fotos = [
-            'https://i.imgur.com/9QFtf5D.jpeg',  # Polo prata
-            'https://i.imgur.com/gSClyQD.jpeg',  # Argo branco
-            'https://i.imgur.com/QwTc2pN.jpeg',  # Onix preto
-            'https://i.imgur.com/LkP3nZJ.jpeg',  # Virtus cinza
-            'https://i.imgur.com/H8vRmKE.jpeg',  # Corolla branco
-            'https://i.imgur.com/XdT7kBP.jpeg',  # Civic azul
-            'https://i.imgur.com/2mFpLsQ.jpeg',  # Compass preto
-            'https://i.imgur.com/rN4cWtV.jpeg',  # SW4 branco
-            'https://i.imgur.com/DqYjU6A.jpeg',  # BMW cinza
-            'https://i.imgur.com/nKbPx3M.jpeg',  # Mercedes preto
-        ]
-        precos = [89.90, 99.90, 94.90, 139.90, 179.90, 169.90, 219.90, 239.90, 389.90, 429.90]
-        descricoes = [
-            'Compacto ideal para o dia a dia urbano. Baixo consumo e facil estacionamento.',
-            'Design moderno e interior amplo para um hatch de entrada. Excelente custo-beneficio.',
-            'O hatch mais vendido do Brasil. Confortavel, economico e pratico.',
-            'Seda elegante com espaco interno generoso. Perfeito para viagens longas.',
-            'Tecnologia hibrida que combina economia e desempenho. Zero emissoes no transito lento.',
-            'Esportividade e tecnologia em um sedan premium. Ideal para quem busca performance.',
-            'SUV compacto com tração 4x4 opcional. Ideal para cidade e estrada.',
-            'SUV robusto com motor diesel. Capacidade para 7 passageiros e bagagem.',
-            'Esportividade e luxo alemaes. Acabamento impecavel e tecnologia de ponta.',
-            'O icone da elegancia. Motor 1.5T com desempenho refinado e conforto absoluto.',
-        ]
-        destaques = [False, False, True, False, True, False, True, False, True, True]
-        for i, v in enumerate(veiculos):
-            cat, criado = Catalogo.objects.get_or_create(
+            # cria catalogo correspondente
+            foto_url = fotos_genericas[i % len(fotos_genericas)]
+            Catalogo.objects.get_or_create(
                 veiculo=v,
                 defaults=dict(
-                    preco_diaria=precos[i],
-                    foto=fotos[i],
-                    descricao_comercial=descricoes[i],
-                    destaque=destaques[i],
+                    preco_diaria=preco,
+                    foto=foto_url,
+                    descricao_comercial=desc_comercial,
+                    destaque=destaque,
                     ativo=True,
                 )
             )
-            status = 'criado' if criado else 'ja existe'
-            self.stdout.write(f'  Catalogo {v.modelo} ({status})')
 
         # ── CLIENTES ──────────────────────────────────────────────────────
         self.stdout.write('Criando clientes...')
         clientes_data = [
-            ('Ana Paula Oliveira',  'ana.oliveira@email.com',   '123.456.789-00', '(51) 99100-1111', '12345678900', 'B', datetime.date(2026, 8, 15)),
-            ('Carlos Eduardo Lima', 'carlos.lima@email.com',    '234.567.890-11', '(51) 99200-2222', '23456789011', 'B', datetime.date(2025, 12, 31)),
-            ('Fernanda Costa',      'fernanda.costa@email.com', '345.678.901-22', '(51) 99300-3333', '34567890122', 'B', datetime.date(2027, 3, 20)),
-            ('Rafael Souza',        'rafael.souza@email.com',   '456.789.012-33', '(51) 99400-4444', '45678901233', 'AB','2026-06-01'),
-            ('Juliana Mendes',      'juliana.mendes@email.com', '567.890.123-44', '(51) 99500-5555', '56789012344', 'B', datetime.date(2028, 1, 10)),
+            ('Ana Paula Oliveira',  'ana.oliveira@email.com',   '123.456.789-00', '(51) 99100-1111', '12345678900', 'B',  datetime.date(2026, 8, 15)),
+            ('Carlos Eduardo Lima', 'carlos.lima@email.com',    '234.567.890-11', '(51) 99200-2222', '23456789011', 'B',  datetime.date(2027, 12, 31)),
+            ('Fernanda Costa',      'fernanda.costa@email.com', '345.678.901-22', '(51) 99300-3333', '34567890122', 'B',  datetime.date(2027, 3, 20)),
+            ('Rafael Souza',        'rafael.souza@email.com',   '456.789.012-33', '(51) 99400-4444', '45678901233', 'AB', datetime.date(2028, 6, 1)),
+            ('Juliana Mendes',      'juliana.mendes@email.com', '567.890.123-44', '(51) 99500-5555', '56789012344', 'B',  datetime.date(2028, 1, 10)),
         ]
         clientes = []
         for nome, email, cpf, tel, cnh, cat_cnh, val_cnh in clientes_data:
-            if isinstance(val_cnh, str):
-                val_cnh = datetime.date.fromisoformat(val_cnh)
             c, criado = Cliente.objects.get_or_create(
                 email=email,
                 defaults=dict(
@@ -184,9 +202,9 @@ class Command(BaseCommand):
         # ── FUNCIONARIOS ──────────────────────────────────────────────────
         self.stdout.write('Criando funcionarios...')
         funcs_data = [
-            ('Marcos Antonio Silva', 'marcos.silva@applocacao.com', '678.901.234-55', '(51) 98001-0001', 'Gerente',            'ADMIN'),
-            ('Beatriz Santos',       'beatriz.santos@applocacao.com','789.012.345-66', '(51) 98002-0002', 'Atendente',          'OPERADOR'),
-            ('Diego Ferreira',       'diego.ferreira@applocacao.com','890.123.456-77', '(51) 98003-0003', 'Analista de Frota',  'OPERADOR'),
+            ('Marcos Antonio Silva', 'marcos.silva@applocacao.com',   '678.901.234-55', '(51) 98001-0001', 'Gerente',           'ADMIN'),
+            ('Beatriz Santos',       'beatriz.santos@applocacao.com', '789.012.345-66', '(51) 98002-0002', 'Atendente',         'OPERADOR'),
+            ('Diego Ferreira',       'diego.ferreira@applocacao.com', '890.123.456-77', '(51) 98003-0003', 'Analista de Frota', 'OPERADOR'),
         ]
         funcionarios = []
         for nome, email, cpf, tel, cargo, nivel in funcs_data:
@@ -205,10 +223,10 @@ class Command(BaseCommand):
         # ── LOCAIS ────────────────────────────────────────────────────────
         self.stdout.write('Criando locais...')
         locais_data = [
-            ('Matriz Porto Alegre',   'Av. Borges de Medeiros, 2000', 'Porto Alegre', 'RS', '90110-150'),
-            ('Filial Aeroporto POA',  'Av. Severo Dullius, 90010',   'Porto Alegre', 'RS', '90200-310'),
-            ('Filial Canoas',         'Av. Victor Barreto, 1500',    'Canoas',       'RS', '92310-000'),
-            ('Filial Novo Hamburgo',  'Rua Frederico Ritter, 800',   'Novo Hamburgo','RS', '93310-100'),
+            ('Matriz Porto Alegre',   'Av. Borges de Medeiros, 2000', 'Porto Alegre',  'RS', '90110-150'),
+            ('Filial Aeroporto POA',  'Av. Severo Dullius, 90010',    'Porto Alegre',  'RS', '90200-310'),
+            ('Filial Canoas',         'Av. Victor Barreto, 1500',     'Canoas',        'RS', '92310-000'),
+            ('Filial Novo Hamburgo',  'Rua Frederico Ritter, 800',    'Novo Hamburgo', 'RS', '93310-100'),
         ]
         locais = []
         for nome, end, cidade, estado, cep in locais_data:
@@ -224,13 +242,12 @@ class Command(BaseCommand):
         self.stdout.write('Criando solicitacoes...')
         hoje = datetime.date.today()
         sol_data = [
-            # cliente, veiculo, local, func,   inicio,        fim,            motivo,             status
-            (clientes[0], veiculos[0], locais[0], funcionarios[0], hoje - datetime.timedelta(10), hoje - datetime.timedelta(5), 'Viagem de negocios', 'finalizada'),
-            (clientes[1], veiculos[3], locais[1], funcionarios[1], hoje - datetime.timedelta(3),  hoje + datetime.timedelta(2), 'Viagem a lazer',     'aprovada'),
-            (clientes[2], veiculos[6], locais[0], None,            hoje + datetime.timedelta(2),  hoje + datetime.timedelta(7), 'Mudanca residencial','pendente'),
-            (clientes[3], veiculos[8], locais[3], None,            hoje + datetime.timedelta(5),  hoje + datetime.timedelta(8), 'Uso corporativo',    'pendente'),
-            (clientes[4], veiculos[4], locais[2], funcionarios[2], hoje - datetime.timedelta(15), hoje - datetime.timedelta(8), 'Visita familiar',    'finalizada'),
-            (clientes[0], veiculos[9], locais[1], funcionarios[1], hoje - datetime.timedelta(1),  hoje + datetime.timedelta(4), 'Evento corporativo', 'aprovada'),
+            (clientes[0], veiculos[0],  locais[0], funcionarios[0], hoje - datetime.timedelta(10), hoje - datetime.timedelta(5), 'Viagem de negocios',  'finalizada'),
+            (clientes[1], veiculos[7],  locais[1], funcionarios[1], hoje - datetime.timedelta(3),  hoje + datetime.timedelta(2), 'Viagem a lazer',      'aprovada'),
+            (clientes[2], veiculos[14], locais[0], None,            hoje + datetime.timedelta(2),  hoje + datetime.timedelta(7), 'Mudanca residencial', 'pendente'),
+            (clientes[3], veiculos[20], locais[3], None,            hoje + datetime.timedelta(5),  hoje + datetime.timedelta(8), 'Uso corporativo',     'pendente'),
+            (clientes[4], veiculos[16], locais[2], funcionarios[2], hoje - datetime.timedelta(15), hoje - datetime.timedelta(8), 'Visita familiar',     'finalizada'),
+            (clientes[0], veiculos[27], locais[1], funcionarios[1], hoje - datetime.timedelta(1),  hoje + datetime.timedelta(4), 'Evento corporativo',  'aprovada'),
         ]
         solicitacoes = []
         for i, (cli, vei, loc, func, ini, fim, motivo, status) in enumerate(sol_data):
@@ -248,17 +265,15 @@ class Command(BaseCommand):
 
         # ── ALOCACOES ─────────────────────────────────────────────────────
         self.stdout.write('Criando alocacoes...')
-        # usa solicitacoes aprovadas (indices 1 e 5)
         aloc_data = [
-            (solicitacoes[1], hoje - datetime.timedelta(3),  hoje + datetime.timedelta(2),  None,  veiculos[3].quilometragem, None,   'ativa'),
-            (solicitacoes[5], hoje - datetime.timedelta(1),  hoje + datetime.timedelta(4),  None,  veiculos[9].quilometragem, None,   'ativa'),
+            (solicitacoes[1], hoje - datetime.timedelta(3), hoje + datetime.timedelta(2), None, veiculos[7].quilometragem,  None, 'ativa'),
+            (solicitacoes[5], hoje - datetime.timedelta(1), hoje + datetime.timedelta(4), None, veiculos[27].quilometragem, None, 'ativa'),
         ]
         for sol, ini, fim_prev, fim_real, km_ini, km_fin, status in aloc_data:
             if Alocacao.objects.filter(solicitacao=sol).exists():
                 a = Alocacao.objects.get(solicitacao=sol)
                 self.stdout.write(f'  Alocacao #{a.id} ja existe')
             else:
-                # marca veiculo como alocado
                 sol.veiculo.status = 'alocado'
                 sol.veiculo.save()
                 a = Alocacao.objects.create(
@@ -275,8 +290,8 @@ class Command(BaseCommand):
         # ── MANUTENCOES ───────────────────────────────────────────────────
         self.stdout.write('Criando manutencoes...')
         man_data = [
-            (veiculos[1], 'Revisao geral',    'Troca de oleo, filtros e verificacao geral do veiculo.',  hoje - datetime.timedelta(20), hoje - datetime.timedelta(14), 450.00, 'CONCLUIDA'),
-            (veiculos[7], 'Troca de pneus',   'Substituicao dos quatro pneus por desgaste.',             hoje - datetime.timedelta(5),  None,                          800.00, 'EM_ANDAMENTO'),
+            (veiculos[2], 'Revisao geral',  'Troca de oleo, filtros e verificacao geral.',     hoje - datetime.timedelta(20), hoje - datetime.timedelta(14), 450.00, 'CONCLUIDA'),
+            (veiculos[19], 'Troca de pneus', 'Substituicao dos quatro pneus por desgaste.',     hoje - datetime.timedelta(5),  None,                          800.00, 'EM_ANDAMENTO'),
         ]
         manutencoes = []
         for vei, tipo, desc, entrada, saida, custo, status in man_data:
@@ -298,10 +313,10 @@ class Command(BaseCommand):
         # ── PECAS ─────────────────────────────────────────────────────────
         self.stdout.write('Criando pecas...')
         pecas_data = [
-            ('Filtro de oleo',   'Bosch',      45.90),
-            ('Filtro de ar',     'Fram',        38.50),
-            ('Pneu 185/65 R15',  'Pirelli',    320.00),
-            ('Pastilha de freio','TRW',         89.90),
+            ('Filtro de oleo',    'Bosch',    45.90),
+            ('Filtro de ar',      'Fram',     38.50),
+            ('Pneu 185/65 R15',   'Pirelli', 320.00),
+            ('Pastilha de freio', 'TRW',      89.90),
         ]
         pecas = []
         for tipo, fab, preco in pecas_data:
@@ -311,7 +326,7 @@ class Command(BaseCommand):
             )
             pecas.append(p)
             status = 'criada' if criado else 'ja existe'
-            self.stdout.write(f'  {tipo} — {fab} ({status})')
+            self.stdout.write(f'  {tipo} - {fab} ({status})')
 
         # vincula pecas na manutencao concluida
         m_concluida = manutencoes[0]
@@ -323,9 +338,15 @@ class Command(BaseCommand):
                     preco_unitario=peca.preco_unitario,
                     sub_total=peca.preco_unitario * qtd,
                 )
-                self.stdout.write(f'  PecaManutencao: {qtd}x {peca.tipo_peca} na manutencao #{m_concluida.id}')
 
         self.stdout.write(self.style.SUCCESS('\nBanco populado com sucesso!'))
-        self.stdout.write('  4 grupos  |  10 veiculos  |  10 catalogo')
-        self.stdout.write('  5 clientes  |  3 funcionarios  |  4 locais')
-        self.stdout.write('  6 solicitacoes  |  2 alocacoes  |  2 manutencoes  |  4 pecas')
+        self.stdout.write(f'  {len(grupos)} grupos  |  {len(veiculos)} veiculos  |  {len(veiculos)} catalogos')
+        self.stdout.write(f'  {len(clientes)} clientes  |  {len(funcionarios)} funcionarios  |  {len(locais)} locais')
+        self.stdout.write(f'  {len(solicitacoes)} solicitacoes  |  2 alocacoes  |  {len(manutencoes)} manutencoes  |  {len(pecas)} pecas')
+        self.stdout.write(self.style.WARNING('\nLOGINS DISPONIVEIS (senha de todos: senha123):'))
+        self.stdout.write('  CLIENTES:')
+        for c in clientes:
+            self.stdout.write(f'    {c.email}')
+        self.stdout.write('  FUNCIONARIOS:')
+        for f in funcionarios:
+            self.stdout.write(f'    {f.email}')

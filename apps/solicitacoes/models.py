@@ -29,6 +29,14 @@ class Solicitacao(models.Model):
         on_delete=models.PROTECT,
         related_name='solicitacoes'
     )
+    # ← NOVO: local de devolucao (pode ser diferente do de retirada)
+    local_devolucao = models.ForeignKey(
+        Local,
+        on_delete=models.PROTECT,
+        related_name='solicitacoes_devolucao',
+        null=True,
+        blank=True,
+    )
     funcionario = models.ForeignKey(
         Funcionario,
         on_delete=models.SET_NULL,
@@ -49,21 +57,18 @@ class Solicitacao(models.Model):
 
     def __str__(self):
         return f'Solicitacao #{self.id} - {self.cliente.nome}'
-    
+
     @property
     def quantidade_dias(self):
         if not self.data_inicio_desejada or not self.data_fim_desejada:
             return 0
-
         dias = (self.data_fim_desejada - self.data_inicio_desejada).days
-
         return max(dias, 1)
 
     @property
     def valor_diaria(self):
         if not self.veiculo or not self.veiculo.grupo:
             return 0
-
         return self.veiculo.grupo.valor_base_diaria
 
     @property
